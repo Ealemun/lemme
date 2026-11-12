@@ -5,8 +5,8 @@
  * uniquement pour pouvoir taper le LaTeX sans doubler les antislashs
  * (grâce à String.raw, abrégé en R). La commande
  *     node tools/build-content.js
- * le vérifie puis produit content/reduction.json (format d'échange)
- * et content/reduction.js (chargé par l'application).
+ * assemble tous les chapitres, les vérifie, puis produit content/contenu.json
+ * (format d'échange) et content/contenu.js (chargé par l'application).
  *
  * Conventions d'écriture des textes :
  *   $...$    formule en ligne          $$...$$  formule centrée
@@ -114,7 +114,7 @@ Le **sous-espace propre** associé est $E_\lambda(u) = \operatorname{Ker}(u - \l
       title: 'Polynôme caractéristique',
       status: 'programme', level: 'cpge', proof: null, source: 'prog-mp',
       statement: R`Le polynôme caractéristique de $A$ est $\chi_A = \det(X I_n - A)$. Il est **unitaire de degré $n$** et
-$$\chi_A = X^n - \operatorname{tr}(A)\,X^{n-1} + \dots + (-1)^n \det(A).$$
+$$\begin{aligned} \chi_A = X^n & - \operatorname{tr}(A)\,X^{n-1} + \cdots \\ & + (-1)^n \det(A). \end{aligned}$$
 Deux matrices semblables ont le même polynôme caractéristique, ce qui permet de définir $\chi_u$.`,
       hypotheses: [],
       idea: R`Pour $n = 2$ : $\chi_A = X^2 - \operatorname{tr}(A)\,X + \det(A)$.`,

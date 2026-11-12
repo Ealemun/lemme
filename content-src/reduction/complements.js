@@ -1,8 +1,8 @@
 /*
  * Lemme — compléments des fiches du chapitre « Réduction des endomorphismes ».
  *
- * Pour chaque notion (repérée par son identifiant défini dans reduction.js) :
- *   examples : exemples positifs (les contre-exemples restent dans reduction.js)
+ * Pour chaque notion (repérée par son identifiant défini dans cours.js) :
+ *   examples : exemples positifs (les contre-exemples restent dans cours.js)
  *   prereqs  : identifiants des notions à maîtriser avant celle-ci
  *              (notions du chapitre ou de la leçon de prérequis)
  *   proof    : démonstration complète, une étape par élément du tableau.

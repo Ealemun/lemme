@@ -3,15 +3,20 @@
  *
  *   node tools/build-content.js
  *
- * 1. assemble le chapitre à partir des fichiers de content-src/ :
- *      reduction.js              fiches, leçons et questions de cours
- *      reduction-complements.js  exemples, prérequis et démonstrations de chaque fiche
- *      prerequis.js              leçon facultative de prérequis
- *      reduction-exercices.js    exercices d'application à étapes ;
- * 2. vérifie la structure (identifiants uniques, réponses valides, renvois existants) ;
+ * 1. assemble chaque chapitre à partir de son dossier content-src/<chapitre>/ :
+ *      cours.js        fiches, leçons et questions de cours
+ *      complements.js  exemples, prérequis et démonstrations de chaque fiche
+ *      prerequis.js    leçon facultative de prérequis (fichier optionnel)
+ *      exercices.js    exercices d'application à étapes ;
+ * 2. vérifie la structure (identifiants uniques sur l'ensemble des chapitres,
+ *    réponses valides, renvois existants) ;
  * 3. compile chaque formule avec KaTeX pour détecter toute erreur de LaTeX ;
- * 4. écrit content/reduction.json (format d'échange, relisible)
- *    et content/reduction.js (même contenu, chargé par la page via une balise script).
+ * 4. écrit content/contenu.json (format d'échange, relisible)
+ *    et content/contenu.js (même contenu, chargé par la page via une balise script).
+ *
+ * Pour ajouter un chapitre : créer son dossier, puis l'ajouter à CHAPTERS ci-dessous.
+ * Les identifiants (leçons, notions, questions, exercices, sources) doivent être
+ * uniques dans toute l'application : préfixer ceux d'un nouveau chapitre.
  *
  * Le script s'arrête avec un code d'erreur si une vérification échoue :
  * aucun contenu invalide ne peut donc être publié.
@@ -21,44 +26,69 @@ const path = require('path');
 const katex = require('../vendor/katex/katex.min.js');
 
 const root = path.join(__dirname, '..');
-const base = require(path.join(root, 'content-src', 'reduction.js'));
-const complements = require(path.join(root, 'content-src', 'reduction-complements.js'));
-const prereq = require(path.join(root, 'content-src', 'prerequis.js'));
-const exercises = require(path.join(root, 'content-src', 'reduction-exercices.js'));
 
-/* ---------- Assemblage ---------- */
-
-// Chaque fiche du chapitre reçoit ses compléments (listes vides par défaut).
-const chapterNotions = base.notions.map((n) => {
-  const extra = complements[n.id] || {};
-  return Object.assign({}, n, {
-    examples: extra.examples || [],
-    prereqs: extra.prereqs || [],
-    proofSteps: extra.proof || null
-  });
-});
-const prereqNotions = prereq.notions.map((n) => Object.assign({ examples: [], prereqs: [], proofSteps: null }, n));
-
-// Chaque étape d'exercice devient une question ordinaire, rattachée à son exercice.
-const exerciseQuestions = [];
-const exerciseIndex = exercises.map((ex) => {
-  const stepIds = ex.steps.map((step, k) => {
-    const id = ex.id + '-s' + (k + 1);
-    exerciseQuestions.push(Object.assign({ id: id, lesson: ex.lesson, notion: ex.notion, tag: 'application', exercise: ex.id, step: k + 1 }, step));
-    return id;
-  });
-  return { id: ex.id, lesson: ex.lesson, level: ex.level, notion: ex.notion, title: ex.title, origin: ex.origin || null, statement: ex.statement, steps: stepIds };
-});
-
-const chapter = Object.assign({}, base, {
-  lessons: [prereq.lesson].concat(base.lessons),
-  notions: prereqNotions.concat(chapterNotions),
-  questions: prereq.questions.concat(base.questions, exerciseQuestions),
-  exercises: exerciseIndex
-});
+/** Chapitres, dans l'ordre du parcours. */
+const CHAPTERS = ['reduction', 'suites-fonctions'];
 
 const errors = [];
 const fail = (msg) => errors.push(msg);
+
+/* ---------- Assemblage ---------- */
+
+/** Charge un chapitre et renvoie ses morceaux, chaque leçon portant l'identifiant du chapitre. */
+function loadChapter(dir) {
+  const folder = path.join(root, 'content-src', dir);
+  const base = require(path.join(folder, 'cours.js'));
+  const complements = require(path.join(folder, 'complements.js'));
+  const exercises = require(path.join(folder, 'exercices.js'));
+  const prereqFile = path.join(folder, 'prerequis.js');
+  const prereq = fs.existsSync(prereqFile) ? require(prereqFile) : { lesson: null, notions: [], questions: [] };
+
+  // Chaque fiche du chapitre reçoit ses compléments (listes vides par défaut).
+  const chapterNotions = base.notions.map((n) => {
+    const extra = complements[n.id] || {};
+    return Object.assign({}, n, {
+      examples: extra.examples || [],
+      prereqs: extra.prereqs || [],
+      proofSteps: extra.proof || null
+    });
+  });
+  Object.keys(complements).forEach((id) => {
+    if (!base.notions.some((n) => n.id === id)) fail(dir + ' : complément pour une notion inconnue « ' + id + ' »');
+  });
+  const prereqNotions = prereq.notions.map((n) => Object.assign({ examples: [], prereqs: [], proofSteps: null }, n));
+
+  // Chaque étape d'exercice devient une question ordinaire, rattachée à son exercice.
+  const exerciseQuestions = [];
+  const exerciseIndex = exercises.map((ex) => {
+    const stepIds = ex.steps.map((step, k) => {
+      const id = ex.id + '-s' + (k + 1);
+      exerciseQuestions.push(Object.assign({ id: id, lesson: ex.lesson, notion: ex.notion, tag: 'application', exercise: ex.id, step: k + 1 }, step));
+      return id;
+    });
+    return { id: ex.id, lesson: ex.lesson, level: ex.level, notion: ex.notion, title: ex.title, origin: ex.origin || null, statement: ex.statement, steps: stepIds };
+  });
+
+  const lessons = (prereq.lesson ? [prereq.lesson] : []).concat(base.lessons)
+    .map((l) => Object.assign({ chapter: base.id }, l));
+
+  return {
+    chapter: { id: base.id, title: base.title, review: base.review, frame: base.frame, sources: base.sources },
+    lessons: lessons,
+    notions: prereqNotions.concat(chapterNotions),
+    questions: prereq.questions.concat(base.questions, exerciseQuestions),
+    exercises: exerciseIndex
+  };
+}
+
+// Le contenu complet : la liste des chapitres, puis tout le reste à plat.
+const content = { chapters: [], lessons: [], notions: [], questions: [], exercises: [] };
+CHAPTERS.forEach((dir) => {
+  const part = loadChapter(dir);
+  content.chapters.push(part.chapter);
+  ['lessons', 'notions', 'questions', 'exercises'].forEach((k) => { content[k] = content[k].concat(part[k]); });
+});
+const chapter = content; // nom utilisé par les vérifications ci-dessous
 
 /* ---------- Vérification du LaTeX ---------- */
 
@@ -91,9 +121,10 @@ function unique(id, where) {
 
 const lessonIds = new Set(chapter.lessons.map((l) => l.id));
 const notionIds = new Set(chapter.notions.map((n) => n.id));
-const sourceIds = new Set(chapter.sources.map((s) => s.id));
+const sourceIds = new Set();
+chapter.chapters.forEach((c) => c.sources.forEach((src) => { unique(src.id, 'source'); sourceIds.add(src.id); }));
 
-checkMath(chapter.frame, 'cadre du chapitre');
+chapter.chapters.forEach((c) => { unique(c.id, 'chapitre'); checkMath(c.frame, 'cadre du chapitre ' + c.id); });
 chapter.lessons.forEach((l) => unique(l.id, 'leçon'));
 
 chapter.notions.forEach((n) => {
@@ -184,10 +215,11 @@ if (errors.length) {
 
 /* ---------- Écriture des fichiers ---------- */
 
+fs.mkdirSync(path.join(root, 'content'), { recursive: true });
 const json = JSON.stringify(chapter, null, 2);
-fs.writeFileSync(path.join(root, 'content', 'reduction.json'), json + '\n');
+fs.writeFileSync(path.join(root, 'content', 'contenu.json'), json + '\n');
 fs.writeFileSync(
-  path.join(root, 'content', 'reduction.js'),
+  path.join(root, 'content', 'contenu.js'),
   '/* Fichier généré par tools/build-content.js : ne pas modifier à la main. */\n' +
     'window.LEMME_CONTENT = ' + JSON.stringify(chapter) + ';\n'
 );
@@ -196,7 +228,7 @@ const nCourse = chapter.questions.filter((q) => !q.exercise).length;
 const byType = {};
 chapter.questions.forEach((q) => { byType[q.type] = (byType[q.type] || 0) + 1; });
 console.log(
-  'Contenu valide : ' + chapter.lessons.length + ' leçons, ' + chapter.notions.length + ' notions, ' +
+  'Contenu valide : ' + chapter.chapters.length + ' chapitres, ' + chapter.lessons.length + ' leçons, ' + chapter.notions.length + ' notions, ' +
     nCourse + ' questions de cours, ' + chapter.exercises.length + ' exercices (' +
     (chapter.questions.length - nCourse) + ' étapes) ' + JSON.stringify(byType)
 );

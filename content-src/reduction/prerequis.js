@@ -5,7 +5,7 @@
  * est facultative (elle ne bloque pas la suite du parcours) et chaque notion
  * peut être retravaillée à tout moment depuis sa fiche.
  *
- * Même format que reduction.js (notions et questions) ; les exemples sont
+ * Même format que cours.js (notions et questions) ; les exemples sont
  * directement dans les fiches.
  */
 const R = String.raw;

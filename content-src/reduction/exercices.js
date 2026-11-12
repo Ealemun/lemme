@@ -2,7 +2,7 @@
  * Lemme — exercices d'application du chapitre « Réduction des endomorphismes ».
  *
  * Un exercice est un énoncé suivi de plusieurs étapes ; chaque étape est une
- * question (mêmes types que dans reduction.js : mcq, multi, tf).
+ * question (mêmes types que dans cours.js : mcq, multi, tf).
  * L'énoncé reste affiché au-dessus de chaque étape.
  *
  *   level  : 1 (application directe), 2 (plusieurs notions), 3 (type concours)
