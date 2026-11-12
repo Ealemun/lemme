@@ -4,8 +4,8 @@ Application mobile (PWA) pour apprendre et réviser les mathématiques des conco
 (CPGE, agrégation) : découverte des théorèmes, hypothèses, démonstrations, pièges,
 puis révision espacée quotidienne avec série de jours.
 
-État : **lot 0, prototype jouable**. Chapitre pilote : réduction des endomorphismes
-(une leçon de prérequis, 5 leçons, 21 fiches, 58 questions de cours, 13 exercices à étapes).
+État : **prototype jouable**, deux chapitres : réduction des endomorphismes, puis suites et séries
+de fonctions (34 fiches, 102 questions de cours, 22 exercices à étapes, une leçon de prérequis par chapitre).
 Le contenu est en attente de relecture par un enseignant.
 
 ## Lancer l'application
@@ -33,11 +33,11 @@ en HTTPS (n'importe quel hébergement de fichiers statiques convient).
 | `js/sync-supabase.js` | Connexion par code e-mail et synchronisation avec un projet Supabase |
 | `supabase/schema.sql` | Table et règles d'accès de la base de synchronisation |
 | `js/app.js` | Interface : écrans, séances, correction |
-| `content-src/reduction.js` | **Contenu à éditer** : fiches, leçons et questions de cours |
-| `content-src/reduction-complements.js` | Exemples, prérequis et démonstrations complètes de chaque fiche |
-| `content-src/prerequis.js` | Leçon facultative de prérequis (récurrence, sommes directes, rang, polynômes, déterminant) |
-| `content-src/reduction-exercices.js` | Exercices d'application à étapes, par niveau croissant |
-| `content/` | Contenu généré (`.json` pour l'échange, `.js` chargé par la page) |
+| `content-src/<chapitre>/cours.js` | **Contenu à éditer** : fiches, leçons et questions de cours |
+| `content-src/<chapitre>/complements.js` | Exemples, prérequis et démonstrations complètes de chaque fiche |
+| `content-src/<chapitre>/prerequis.js` | Leçon facultative de prérequis du chapitre |
+| `content-src/<chapitre>/exercices.js` | Exercices d'application à étapes, par niveau croissant |
+| `content/` | Contenu généré, tous chapitres réunis (`contenu.json` pour l'échange, `contenu.js` chargé par la page) |
 | `tools/build-content.js` | Vérifie le contenu (structure, LaTeX) et génère `content/` |
 | `tests/engine.test.js` | Tests automatiques du moteur |
 | `.github/workflows/` | Intégration continue (tests, contenu) et déploiement sur GitHub Pages |
@@ -61,6 +61,8 @@ Règles :
 
 - chaque notion cite sa source (`source`) ; chaque question renvoie à une notion ;
 - les identifiants ne changent jamais une fois publiés : la progression des utilisateurs y est attachée ;
+- pour un nouveau chapitre : créer son dossier dans `content-src/`, préfixer tous ses identifiants,
+  puis l'ajouter à la liste `CHAPTERS` de `tools/build-content.js` ;
 - `node tools/build-content.js` refuse tout contenu invalide (identifiant en double,
   réponse hors limites, formule LaTeX qui ne compile pas).
 

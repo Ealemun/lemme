@@ -10,7 +10,7 @@
  * Pour publier une nouvelle version de l'application ou du contenu,
  * changer VERSION : l'ancien cache est supprimé à l'activation.
  */
-const VERSION = 'lemme-v3';
+const VERSION = 'lemme-v4';
 
 const FILES = [
   './',
@@ -23,7 +23,7 @@ const FILES = [
   'js/sync-supabase.js',
   'js/store.js',
   'js/app.js',
-  'content/reduction.js',
+  'content/contenu.js',
   'vendor/katex/katex.min.js',
   'vendor/katex/katex.min.css',
   'icons/icon.svg',
