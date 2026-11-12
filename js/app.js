@@ -29,8 +29,14 @@
   C.questions.forEach(function (q) { QUESTIONS[q.id] = q; });
   const NOTIONS = {};
   C.notions.forEach(function (n) { NOTIONS[n.id] = n; });
+  const CHAPTERS = {};
   const SOURCES = {};
-  C.sources.forEach(function (s) { SOURCES[s.id] = s; });
+  C.chapters.forEach(function (ch) {
+    CHAPTERS[ch.id] = ch;
+    ch.sources.forEach(function (s) { SOURCES[s.id] = s; });
+  });
+  const LESSONS = {};
+  C.lessons.forEach(function (l) { LESSONS[l.id] = l; });
   const EXERCISES = {};
   C.exercises.forEach(function (e) { EXERCISES[e.id] = e; });
 
@@ -68,10 +74,15 @@
     return C.exercises.filter(function (e) { return e.lesson === lessonId; });
   };
 
-  /** Libellé d'une leçon : « Prérequis » pour la leçon facultative, « Leçon k » sinon. */
+  /** Leçons d'un chapitre, dans l'ordre. */
+  const chapterLessons = function (chapterId) {
+    return C.lessons.filter(function (l) { return l.chapter === chapterId; });
+  };
+
+  /** Libellé d'une leçon : « Prérequis » pour la leçon facultative, « Leçon k » (rang dans son chapitre) sinon. */
   function lessonLabel(lesson) {
     if (lesson.optional) return 'Prérequis';
-    const rank = C.lessons.filter(function (l) { return !l.optional; }).indexOf(lesson) + 1;
+    const rank = chapterLessons(lesson.chapter).filter(function (l) { return !l.optional; }).indexOf(lesson) + 1;
     return 'Leçon ' + rank;
   }
   const lessonNotions = function (lessonId) {
@@ -81,7 +92,8 @@
   /**
    * État d'une leçon : 'done', 'open' (disponible) ou 'locked'.
    * Une leçon facultative est toujours disponible et ne bloque pas la suivante :
-   * une leçon s'ouvre quand la leçon obligatoire qui la précède est terminée.
+   * une leçon s'ouvre quand la leçon obligatoire qui la précède dans son chapitre est terminée.
+   * Les chapitres sont indépendants : la première leçon de chacun est toujours disponible.
    */
   function lessonState(index) {
     const p = progress();
@@ -89,6 +101,7 @@
     if (p.lessons[lesson.id]) return 'done';
     if (lesson.optional) return 'open';
     for (let i = index - 1; i >= 0; i--) {
+      if (C.lessons[i].chapter !== lesson.chapter) break;
       if (!C.lessons[i].optional) return p.lessons[C.lessons[i].id] ? 'open' : 'locked';
     }
     return 'open';
@@ -338,10 +351,7 @@
     const pct = Math.min(100, Math.round((xpToday / goal()) * 100));
     const due = dueQuestionIds();
     const next = nextLesson();
-    const mainLessons = C.lessons.filter(function (l) { return !l.optional; });
-    const doneCount = mainLessons.filter(function (l) { return p.lessons[l.id]; }).length;
     const nextEx = nextExercise();
-    const exDone = C.exercises.filter(function (e) { return p.exercises[e.id]; }).length;
 
     // Bandeau des 7 derniers jours.
     let week = '';
@@ -369,7 +379,7 @@
     }
     if (next) {
       actions += '<button class="btn ' + (due.length ? 'ghost' : 'primary') + '" data-act="open-lesson" data-id="' + next.lesson.id + '">' +
-        '<span>' + lessonLabel(next.lesson) + ' · ' + T.esc(next.lesson.title) + '</span><small>Découvrir, puis ' +
+        '<span>' + lessonLabel(next.lesson) + ' · ' + T.esc(next.lesson.title) + '</span><small>' + T.esc(CHAPTERS[next.lesson.chapter].title) + ' · découvrir, puis ' +
         lessonQuestions(next.lesson.id).length + ' questions</small></button>';
     }
     if (nextEx) {
@@ -380,14 +390,31 @@
       actions += '<p class="quiet">Tout est à jour. Les prochaines révisions arriveront à leur échéance ; vous pouvez retravailler les pièges depuis la bibliothèque.</p>';
     }
 
-    // Répartition des notions par niveau de maîtrise.
-    const counts = { nouvelle: 0, apprentissage: 0, consolidee: 0, maitrisee: 0 };
-    C.notions.forEach(function (n) { counts[notionMastery(n.id)] += 1; });
-    const bar = ['maitrisee', 'consolidee', 'apprentissage', 'nouvelle'].map(function (k) {
-      return counts[k] ? '<span class="seg m-' + k + '" style="flex:' + counts[k] + '" title="' + MASTERY_LABEL[k] + ' : ' + counts[k] + '"></span>' : '';
-    }).join('');
-    const legend = ['maitrisee', 'consolidee', 'apprentissage', 'nouvelle'].map(function (k) {
-      return '<li><span class="key m-' + k + '"></span>' + MASTERY_LABEL[k] + ' <b>' + counts[k] + '</b></li>';
+    // Une carte par chapitre : avancement et répartition des notions par niveau de maîtrise.
+    const chapterCards = C.chapters.map(function (ch) {
+      const lessons = chapterLessons(ch.id);
+      const ids = lessons.map(function (l) { return l.id; });
+      const main = lessons.filter(function (l) { return !l.optional; });
+      const done = main.filter(function (l) { return p.lessons[l.id]; }).length;
+      const exs = C.exercises.filter(function (e) { return ids.indexOf(e.lesson) !== -1; });
+      const exOk = exs.filter(function (e) { return p.exercises[e.id]; }).length;
+      const notions = C.notions.filter(function (n) { return ids.indexOf(n.lesson) !== -1; });
+      const counts = { nouvelle: 0, apprentissage: 0, consolidee: 0, maitrisee: 0 };
+      notions.forEach(function (n) { counts[notionMastery(n.id)] += 1; });
+      const order = ['maitrisee', 'consolidee', 'apprentissage', 'nouvelle'];
+      const bar = order.map(function (k) {
+        return counts[k] ? '<span class="seg m-' + k + '" style="flex:' + counts[k] + '" title="' + MASTERY_LABEL[k] + ' : ' + counts[k] + '"></span>' : '';
+      }).join('');
+      const legend = order.map(function (k) {
+        return '<li><span class="key m-' + k + '"></span>' + MASTERY_LABEL[k] + ' <b>' + counts[k] + '</b></li>';
+      }).join('');
+      return '<section class="panel">' +
+        '<h2>' + T.esc(ch.title) + '</h2>' +
+        '<p class="meta">' + done + ' leçon' + (done > 1 ? 's' : '') + ' sur ' + main.length + ' terminée' + (done > 1 ? 's' : '') +
+          ' · ' + exOk + ' exercice' + (exOk > 1 ? 's' : '') + ' sur ' + exs.length + ' · ' + notions.length + ' notions</p>' +
+        '<div class="mastery-bar">' + bar + '</div>' +
+        '<ul class="legend">' + legend + '</ul>' +
+      '</section>';
     }).join('');
 
     return '' +
@@ -406,54 +433,51 @@
         '<p class="status">' + status + '</p>' +
       '</section>' +
       '<section class="actions">' + actions + '</section>' +
-      '<section class="panel">' +
-        '<h2>' + T.esc(C.title) + '</h2>' +
-        '<p class="meta">' + doneCount + ' leçon' + (doneCount > 1 ? 's' : '') + ' sur ' + mainLessons.length + ' terminée' + (doneCount > 1 ? 's' : '') +
-          ' · ' + exDone + ' exercice' + (exDone > 1 ? 's' : '') + ' sur ' + C.exercises.length + ' · ' + C.notions.length + ' notions</p>' +
-        '<div class="mastery-bar">' + bar + '</div>' +
-        '<ul class="legend">' + legend + '</ul>' +
-      '</section>';
+      chapterCards;
   }
 
   /* --- Parcours --- */
   function renderPath() {
-    const items = C.lessons.map(function (l, i) {
-      const state = lessonState(i);
-      const nQ = lessonQuestions(l.id).length;
-      const nN = lessonNotions(l.id).length;
-      const exs = lessonExercises(l.id);
-      const exOk = exs.filter(function (e) { return progress().exercises[e.id]; }).length;
-      const label = lessonLabel(l);
-      const mark = state === 'done' ? ICON.check : state === 'locked' ? ICON.lock : l.optional ? 'P' : label.replace('Leçon ', '');
-      const hint = state === 'done' ? 'Terminée' + (exs.length ? ' · exercices ' + exOk + ' / ' + exs.length : ' · revoir la leçon')
-        : state === 'open' ? (l.optional ? 'Facultatif · ' : '') + plural(nN, 'notion', 'notions') + ' · ' + nQ + ' questions' +
-          (exs.length ? ' · ' + plural(exs.length, 'exercice', 'exercices') : '')
-        : 'Terminez la leçon précédente';
-      return '<li class="step ' + state + '">' +
-        '<button class="step-btn" data-act="open-lesson" data-id="' + l.id + '"' + (state === 'locked' ? ' disabled' : '') + '>' +
-          '<span class="node">' + mark + '</span>' +
-          '<span class="step-body"><span class="step-title">' + (l.optional ? '' : label + ' · ') + T.esc(l.title) + '</span>' +
-          '<span class="step-blurb">' + T.esc(l.blurb) + '</span>' +
-          '<span class="step-hint">' + hint + '</span></span>' +
-        '</button></li>';
-    }).join('');
+    return C.chapters.map(function (ch, k) {
+      const items = C.lessons.map(function (l, i) {
+        if (l.chapter !== ch.id) return '';
+        const state = lessonState(i);
+        const nQ = lessonQuestions(l.id).length;
+        const nN = lessonNotions(l.id).length;
+        const exs = lessonExercises(l.id);
+        const exOk = exs.filter(function (e) { return progress().exercises[e.id]; }).length;
+        const label = lessonLabel(l);
+        const mark = state === 'done' ? ICON.check : state === 'locked' ? ICON.lock : l.optional ? 'P' : label.replace('Leçon ', '');
+        const hint = state === 'done' ? 'Terminée' + (exs.length ? ' · exercices ' + exOk + ' / ' + exs.length : ' · revoir la leçon')
+          : state === 'open' ? (l.optional ? 'Facultatif · ' : '') + plural(nN, 'notion', 'notions') + ' · ' + nQ + ' questions' +
+            (exs.length ? ' · ' + plural(exs.length, 'exercice', 'exercices') : '')
+          : 'Terminez la leçon précédente';
+        return '<li class="step ' + state + '">' +
+          '<button class="step-btn" data-act="open-lesson" data-id="' + l.id + '"' + (state === 'locked' ? ' disabled' : '') + '>' +
+            '<span class="node">' + mark + '</span>' +
+            '<span class="step-body"><span class="step-title">' + (l.optional ? '' : label + ' · ') + T.esc(l.title) + '</span>' +
+            '<span class="step-blurb">' + T.esc(l.blurb) + '</span>' +
+            '<span class="step-hint">' + hint + '</span></span>' +
+          '</button></li>';
+      }).join('');
 
-    const sources = C.sources.map(function (s) {
-      return '<li><a href="' + T.esc(s.url) + '" target="_blank" rel="noopener">' + T.esc(s.label) + '</a></li>';
-    }).join('');
+      const sources = ch.sources.map(function (s) {
+        return '<li><a href="' + T.esc(s.url) + '" target="_blank" rel="noopener">' + T.esc(s.label) + '</a></li>';
+      }).join('');
 
-    return '' +
-      '<section class="panel">' +
-        '<p class="eyebrow">Parcours MP et agrégation · chapitre pilote</p>' +
-        '<h2>' + T.esc(C.title) + '</h2>' +
-        '<p class="frame">' + T.html(C.frame) + '</p>' +
-      '</section>' +
-      '<ol class="steps">' + items + '</ol>' +
-      '<section class="panel">' +
-        '<h3>Sources du chapitre</h3>' +
-        '<ul class="sources">' + sources + '</ul>' +
-        '<p class="meta">Contenu en cours de relecture par un enseignant.</p>' +
-      '</section>';
+      return '' +
+        '<section class="panel">' +
+          '<p class="eyebrow">Chapitre ' + (k + 1) + ' · parcours MP et agrégation</p>' +
+          '<h2>' + T.esc(ch.title) + '</h2>' +
+          '<p class="frame">' + T.html(ch.frame) + '</p>' +
+        '</section>' +
+        '<ol class="steps">' + items + '</ol>' +
+        '<section class="panel">' +
+          '<h3>Sources du chapitre</h3>' +
+          '<ul class="sources">' + sources + '</ul>' +
+          '<p class="meta">Contenu en cours de relecture par un enseignant.</p>' +
+        '</section>';
+    }).join('');
   }
 
   /* --- Bibliothèque --- */
@@ -466,6 +490,7 @@
   function renderLibraryList() {
     const needle = fold(ui.search.trim());
     let html = '';
+    let lastChapter = null;
     C.lessons.forEach(function (l) {
       const rows = lessonNotions(l.id).filter(function (n) {
         return !needle || fold(n.title + ' ' + n.kind).indexOf(needle) !== -1;
@@ -477,7 +502,12 @@
           '<span class="row-title">' + T.html(n.title) + '</span></span>' +
           '<span class="pill m-' + m + '">' + MASTERY_LABEL[m] + '</span></button></li>';
       }).join('');
-      if (rows) html += '<h3 class="group">' + (l.optional ? '' : lessonLabel(l) + ' · ') + T.esc(l.title) + '</h3><ul class="rows">' + rows + '</ul>';
+      if (!rows) return;
+      if (l.chapter !== lastChapter) {
+        html += '<h2 class="chapter-title">' + T.esc(CHAPTERS[l.chapter].title) + '</h2>';
+        lastChapter = l.chapter;
+      }
+      html += '<h3 class="group">' + (l.optional ? '' : lessonLabel(l) + ' · ') + T.esc(l.title) + '</h3><ul class="rows">' + rows + '</ul>';
     });
     return html || '<p class="quiet">Aucune notion ne correspond à cette recherche.</p>';
   }
@@ -681,7 +711,7 @@
 
     return overlayHead((l.optional ? '' : lessonLabel(l) + ' · ') + T.esc(l.title), 'close-overlay', ICON.back) +
       '<div class="ov-body">' +
-        '<p class="frame">' + T.html(C.frame) + '</p>' +
+        '<p class="frame">' + T.html(CHAPTERS[l.chapter].frame) + '</p>' +
         lessonNotions(lessonId).map(renderFiche).join('') +
         (exRows ? '<h3 class="group">Exercices d\'application</h3><ul class="rows">' + exRows + '</ul>' : '') +
       '</div>' +
@@ -872,6 +902,7 @@
     if (ui.tab === 'profile') $view.innerHTML = renderProfile();
 
     // Vue plein écran éventuelle.
+    fitFormulas($view);
     if (!ui.overlay) {
       $overlay.hidden = true;
       $overlay.innerHTML = '';
@@ -886,6 +917,20 @@
     $overlay.innerHTML = html;
     $overlay.hidden = false;
     document.body.classList.add('has-overlay');
+    fitFormulas($overlay);
+  }
+
+  /**
+   * Réduit la taille des formules centrées plus larges que leur cadre, jusqu'à 72 % ;
+   * au-delà, la formule reste à cette taille et défile horizontalement.
+   */
+  function fitFormulas(container) {
+    container.querySelectorAll('.math-block').forEach(function (m) {
+      m.style.fontSize = '';
+      if (!m.clientWidth) return; // bloc masqué (démonstration repliée) : ajusté à l'ouverture
+      const ratio = m.clientWidth / m.scrollWidth;
+      if (ratio < 1) m.style.fontSize = Math.max(0.72, ratio * 0.97).toFixed(3) + 'em';
+    });
   }
 
   /** Revient en haut de la vue plein écran (nouvelle question, nouvelle fiche). */
@@ -1010,6 +1055,12 @@
     const list = document.getElementById('lib-list');
     if (list) list.innerHTML = renderLibraryList();
   });
+
+  // Ouverture d'une démonstration repliée : ses formules deviennent mesurables, on les ajuste.
+  document.addEventListener('toggle', function (ev) {
+    if (ev.target.classList && ev.target.classList.contains('proof')) fitFormulas(ev.target);
+  }, true);
+  window.addEventListener('resize', function () { fitFormulas(document.body); });
 
   // Touche Entrée dans les champs du compte : même effet que le bouton.
   document.addEventListener('keydown', function (ev) {

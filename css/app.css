@@ -214,6 +214,7 @@ math { font-size: 1.080em; } /* rendu MathML natif */
   width: 100%; padding: 12px 14px; border-radius: 10px; border: 1.500px solid var(--line);
   background: var(--bg); color: var(--ink); font: inherit;
 }
+.chapter-title { margin: 14px 4px 0; font: 600 1.250rem/1.25 var(--font-text); }
 .group { margin: 8px 4px 6px; font-size: 0.800rem; color: var(--ink-2); letter-spacing: 0.020em; }
 .rows { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .rows li + li { border-top: 1px solid var(--line); }
