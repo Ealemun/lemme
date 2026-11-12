@@ -1,0 +1,32 @@
+# Intégration continue : tests du moteur et vérification du contenu.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Espacement des révisions, série de jours, fusion des progressions.
+      - name: Tests du moteur
+        run: node --test
+
+      # Identifiants, réponses, prérequis, et compilation de chaque formule LaTeX.
+      - name: Vérification du contenu
+        run: node tools/build-content.js
+
+      # Le contenu généré doit correspondre aux sources : sinon quelqu'un a oublié de le régénérer.
+      - name: Contenu généré à jour
+        run: git diff --exit-code -- content/
+
+      - name: Syntaxe des scripts
+        run: |
+          for f in js/*.js sw.js tools/*.js; do node --check "$f"; done

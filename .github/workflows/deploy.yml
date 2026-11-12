@@ -1,0 +1,53 @@
+# Déploiement continu : publie le site sur GitHub Pages à chaque envoi sur main.
+# À activer une fois : Settings > Pages > Source : « GitHub Actions ».
+name: Déploiement
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois ; un envoi plus récent remplace celui en attente.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test
+      - run: node tools/build-content.js
+
+  deployer:
+    needs: verifier
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Seuls les fichiers utiles au site sont publiés (ni sources de contenu, ni tests).
+      - name: Préparer le site
+        run: |
+          mkdir site
+          cp -r index.html manifest.webmanifest sw.js css js content icons vendor site/
+          rm -f site/content/*.json
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
