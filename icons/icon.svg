@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Icône : un « L » de craie et le carré de fin de démonstration, sur fond vert tableau. -->
+  <rect width="512" height="512" fill="#1c5a48"/>
+  <path d="M160 130v230h130" fill="none" stroke="#f3f7f4" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="318" y="296" width="64" height="64" fill="#ff8a4c"/>
+</svg>
