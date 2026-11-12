@@ -1,0 +1,2548 @@
+{
+  "id": "reduction",
+  "title": "Réduction des endomorphismes",
+  "review": "a-relire",
+  "frame": "Dans tout le chapitre, $\\mathbb{K}$ désigne $\\mathbb{R}$ ou $\\mathbb{C}$, $E$ un $\\mathbb{K}$-espace vectoriel de dimension finie $n \\geq 1$ (sauf mention contraire), $u \\in \\mathcal{L}(E)$ et $A \\in \\mathcal{M}_n(\\mathbb{K})$.",
+  "sources": [
+    {
+      "id": "prog-mp",
+      "label": "Programme de mathématiques de MP, section « Réduction des endomorphismes et des matrices carrées »",
+      "url": "https://cahier-de-prepa.fr/mp2-montaigne/download?id=89"
+    },
+    {
+      "id": "jury-2024",
+      "label": "Rapport du jury de l'agrégation externe de mathématiques, session 2024 (leçons 153 à 157)",
+      "url": "https://devenirenseignant.gouv.fr/media/14767/download"
+    }
+  ],
+  "notions": [
+    {
+      "examples": [
+        "$\\mathcal{P}(n)$ : « $\\sum_{k=1}^{n} k = \\frac{n(n+1)}{2}$ ». Initialisation : $1 = \\frac{1 \\times 2}{2}$. Hérédité : $\\sum_{k=1}^{n+1} k = \\frac{n(n+1)}{2} + (n+1) = \\frac{(n+1)(n+2)}{2}$."
+      ],
+      "prereqs": [],
+      "proofSteps": null,
+      "id": "p-recurrence",
+      "lesson": "l0",
+      "kind": "Méthode",
+      "title": "Raisonnement par récurrence",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": null,
+      "statement": "Pour démontrer « pour tout entier $n \\geq n_0$, $\\mathcal{P}(n)$ » :\n**Initialisation.** On démontre $\\mathcal{P}(n_0)$.\n**Hérédité.** On fixe un entier $n \\geq n_0$ **quelconque** tel que $\\mathcal{P}(n)$ soit vraie, et on démontre $\\mathcal{P}(n+1)$.\n**Récurrence forte.** Dans l'hérédité, on peut supposer $\\mathcal{P}(k)$ vraie pour tout $k$ tel que $n_0 \\leq k \\leq n$.",
+      "hypotheses": [
+        "Les **deux** étapes sont indispensables.",
+        "La propriété $\\mathcal{P}(n)$ doit être **énoncée précisément** avant de commencer, quantificateurs compris."
+      ],
+      "idea": "Dans ce chapitre, la récurrence porte souvent sur un nombre de valeurs propres ou sur la dimension de l'espace : il faut alors quantifier sur **tous** les objets de cette taille dans $\\mathcal{P}(n)$.",
+      "counterexamples": [
+        "Sans initialisation : pour $\\mathcal{P}(n)$ : « $n = n + 1$ », l'implication $\\mathcal{P}(n) \\Rightarrow \\mathcal{P}(n+1)$ est vraie pour tout $n$, alors que $\\mathcal{P}(n)$ est toujours fausse."
+      ],
+      "pitfalls": [
+        "Écrire « supposons $\\mathcal{P}(n)$ vraie pour tout $n$ » dans l'hérédité revient à supposer ce que l'on veut démontrer. On écrit : « soit $n \\geq n_0$ tel que $\\mathcal{P}(n)$ soit vraie »."
+      ],
+      "notations": []
+    },
+    {
+      "examples": [
+        "$\\mathbb{R}^2 = \\operatorname{Vect}((1,0)) \\oplus \\operatorname{Vect}((0,1))$.",
+        "$\\mathcal{M}_n(\\mathbb{R})$ est la somme directe du sous-espace des matrices symétriques et de celui des matrices antisymétriques."
+      ],
+      "prereqs": [],
+      "proofSteps": null,
+      "id": "p-sev",
+      "lesson": "l0",
+      "kind": "Définition",
+      "title": "Somme et somme directe de sous-espaces",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": null,
+      "statement": "Soient $F_1, \\dots, F_p$ des sous-espaces vectoriels de $E$. Leur somme $F_1 + \\dots + F_p$ est **directe** si tout vecteur de la somme s'écrit de manière unique $x_1 + \\dots + x_p$ avec $x_i \\in F_i$. Cela équivaut à : pour tous $x_1 \\in F_1, \\dots, x_p \\in F_p$,\n$$\\sum_{i=1}^{p} x_i = 0 \\implies \\forall i,\\ x_i = 0.$$\nEn dimension finie, la somme est directe si et seulement si\n$$\\dim \\Big( \\sum_{i=1}^{p} F_i \\Big) = \\sum_{i=1}^{p} \\dim F_i.$$",
+      "hypotheses": [],
+      "idea": "Pour **deux** sous-espaces, la somme $F + G$ est directe si et seulement si $F \\cap G = \\{0\\}$.",
+      "counterexamples": [
+        "Dans $\\mathbb{R}^2$, les trois droites $\\operatorname{Vect}((1,0))$, $\\operatorname{Vect}((0,1))$ et $\\operatorname{Vect}((1,1))$ ont des intersections deux à deux réduites à $\\{0\\}$, mais leur somme n'est pas directe : $(1,0) + (0,1) - (1,1) = 0$."
+      ],
+      "pitfalls": [
+        "À partir de **trois** sous-espaces, « intersections deux à deux nulles » ne suffit pas pour avoir une somme directe."
+      ],
+      "notations": [
+        "On note $F_1 \\oplus \\dots \\oplus F_p$ ou $\\bigoplus_{i} F_i$ une somme directe."
+      ]
+    },
+    {
+      "examples": [
+        "Pour $u : (x, y) \\mapsto (x, 0)$ sur $\\mathbb{R}^2$ : $\\operatorname{Ker} u = \\operatorname{Vect}((0,1))$ et $\\operatorname{rg}(u) = 1$ ; on a bien $2 = 1 + 1$."
+      ],
+      "prereqs": [
+        "p-sev"
+      ],
+      "proofSteps": null,
+      "id": "p-rang",
+      "lesson": "l0",
+      "kind": "Théorème",
+      "title": "Théorème du rang",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": null,
+      "statement": "Si $E$ est de dimension finie et $u \\in \\mathcal{L}(E, F)$, alors\n$$\\dim E = \\dim \\operatorname{Ker} u + \\operatorname{rg}(u).$$\n**Conséquence.** Pour un endomorphisme $u$ d'un espace de dimension finie : $u$ injectif $\\iff$ $u$ surjectif $\\iff$ $u$ bijectif.",
+      "hypotheses": [
+        "L'espace de départ est de **dimension finie**."
+      ],
+      "idea": "$u$ induit un isomorphisme de tout supplémentaire de $\\operatorname{Ker} u$ sur $\\operatorname{Im} u$.",
+      "counterexamples": [
+        "En dimension infinie, $P \\mapsto XP$ sur $\\mathbb{K}[X]$ est injectif mais pas surjectif, et la dérivation $P \\mapsto P'$ est surjective mais pas injective."
+      ],
+      "pitfalls": [
+        "Le théorème ne dit pas que $E = \\operatorname{Ker} u \\oplus \\operatorname{Im} u$ : pour $\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$, le noyau et l'image sont la même droite."
+      ],
+      "notations": []
+    },
+    {
+      "examples": [
+        "$X^2 - 3X + 2 = (X-1)(X-2)$ est scindé à racines simples sur $\\mathbb{R}$.",
+        "$X - 1$ et $X - 2$ sont premiers entre eux : $(X - 1) - (X - 2) = 1$."
+      ],
+      "prereqs": [],
+      "proofSteps": null,
+      "id": "p-polynomes",
+      "lesson": "l0",
+      "kind": "Rappels",
+      "title": "Polynômes : racines, polynôme scindé, Bézout",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": null,
+      "statement": "$\\lambda \\in \\mathbb{K}$ est **racine de multiplicité $m$** de $P$ si $(X - \\lambda)^m$ divise $P$ et $(X - \\lambda)^{m+1}$ ne le divise pas.\n$P$ non constant est **scindé sur $\\mathbb{K}$** s'il s'écrit $c \\prod_{i} (X - \\lambda_i)$ avec $c \\in \\mathbb{K}^*$ et $\\lambda_i \\in \\mathbb{K}$ ; il est **à racines simples** si de plus les $\\lambda_i$ sont deux à deux distincts.\n**Théorème de Bézout.** $A$ et $B$ sont premiers entre eux si et seulement s'il existe $U, V \\in \\mathbb{K}[X]$ tels que $AU + BV = 1$.",
+      "hypotheses": [
+        "« Scindé » dépend du corps : il faut toujours préciser **sur $\\mathbb{K}$**."
+      ],
+      "idea": "Deux polynômes scindés sont premiers entre eux si et seulement s'ils n'ont aucune racine commune. Sur $\\mathbb{C}$, tout polynôme non constant est scindé (théorème de d'Alembert-Gauss).",
+      "counterexamples": [
+        "$X^2 + 1$ est scindé sur $\\mathbb{C}$ mais pas sur $\\mathbb{R}$.",
+        "$(X-1)^2$ est scindé mais n'est pas à racines simples."
+      ],
+      "pitfalls": [
+        "« Scindé » et « à racines simples » sont deux propriétés indépendantes : $X^2 + 1$ n'a que des racines simples (dans $\\mathbb{C}$) sans être scindé sur $\\mathbb{R}$."
+      ],
+      "notations": []
+    },
+    {
+      "examples": [
+        "$\\det \\begin{pmatrix}1&2\\\\3&4\\end{pmatrix} = 1 \\times 4 - 2 \\times 3 = -2$."
+      ],
+      "prereqs": [],
+      "proofSteps": null,
+      "id": "p-determinant",
+      "lesson": "l0",
+      "kind": "Rappels",
+      "title": "Déterminant",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": null,
+      "statement": "Pour $A, B \\in \\mathcal{M}_n(\\mathbb{K})$ et $\\lambda \\in \\mathbb{K}$ :\n$\\det(AB) = \\det(A)\\det(B)$ ; $\\det(\\lambda A) = \\lambda^n \\det(A)$ ; $A$ est inversible si et seulement si $\\det(A) \\neq 0$.\nLe déterminant d'une matrice triangulaire est le produit de ses coefficients diagonaux. Pour une matrice triangulaire par blocs :\n$$\\det \\begin{pmatrix} A & B \\\\ 0 & C \\end{pmatrix} = \\det(A)\\,\\det(C).$$",
+      "hypotheses": [
+        "Dans la formule par blocs, $A$ et $C$ sont des blocs **carrés**."
+      ],
+      "idea": "Deux matrices semblables ont le même déterminant : $\\det(P^{-1} A P) = \\det(A)$.",
+      "counterexamples": [
+        "Le déterminant n'est pas additif : $\\det(I_2 + I_2) = 4$ alors que $\\det(I_2) + \\det(I_2) = 2$."
+      ],
+      "pitfalls": [
+        "$\\det(\\lambda A) = \\lambda^n \\det(A)$ et non $\\lambda \\det(A)$. En particulier $\\det(-A) = (-1)^n \\det(A)$."
+      ],
+      "notations": []
+    },
+    {
+      "id": "n-elements-propres",
+      "lesson": "l1",
+      "kind": "Définition",
+      "title": "Valeur propre, vecteur propre, sous-espace propre",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": "prog-mp",
+      "statement": "Un scalaire $\\lambda \\in \\mathbb{K}$ est **valeur propre** de $u$ s'il existe un vecteur $x \\neq 0$ tel que $u(x) = \\lambda x$. Un tel $x$ est un **vecteur propre** associé à $\\lambda$.\nLe **sous-espace propre** associé est $E_\\lambda(u) = \\operatorname{Ker}(u - \\lambda\\,\\mathrm{Id}_E)$. Le **spectre** $\\operatorname{Sp}(u)$ est l'ensemble des valeurs propres.",
+      "hypotheses": [
+        "Le vecteur propre est **non nul** : c'est dans la définition.",
+        "La valeur propre est cherchée **dans le corps** $\\mathbb{K}$."
+      ],
+      "idea": "$\\lambda$ est valeur propre si et seulement si $u - \\lambda\\,\\mathrm{Id}_E$ n'est pas injectif, c'est-à-dire (en dimension finie) pas inversible.",
+      "counterexamples": [
+        "La matrice $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ (rotation d'angle $\\pi/2$) n'a aucune valeur propre réelle, mais admet $i$ et $-i$ comme valeurs propres complexes."
+      ],
+      "pitfalls": [
+        "$E_\\lambda(u)$ n'est pas « l'ensemble des vecteurs propres » : il contient aussi le vecteur nul.",
+        "$0$ peut être valeur propre : c'est le cas exactement quand $u$ n'est pas injectif."
+      ],
+      "notations": [
+        "$E_\\lambda(u)$, $\\operatorname{Ker}(u - \\lambda\\,\\mathrm{Id}_E)$ et $\\operatorname{Ker}(\\lambda\\,\\mathrm{Id}_E - u)$ désignent le même sous-espace.",
+        "Pour une matrice on précise le corps : $\\operatorname{Sp}_{\\mathbb{R}}(A) \\subset \\operatorname{Sp}_{\\mathbb{C}}(A)$."
+      ],
+      "examples": [
+        "Pour $A = \\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$ : $e_1 = (1,0)$ est vecteur propre associé à $2$, $e_2 = (0,1)$ est vecteur propre associé à $3$, et $\\operatorname{Sp}(A) = \\{2, 3\\}$.",
+        "Pour une homothétie $\\lambda\\,\\mathrm{Id}_E$ : tout vecteur non nul est vecteur propre, et le spectre est $\\{\\lambda\\}$.",
+        "Pour la projection $p$ sur $F$ parallèlement à $G$ (avec $F$ et $G$ non réduits à $\\{0\\}$) : $E_1(p) = F$ et $E_0(p) = G$."
+      ],
+      "prereqs": [
+        "p-sev",
+        "p-rang"
+      ],
+      "proofSteps": null
+    },
+    {
+      "id": "n-somme-directe",
+      "lesson": "l1",
+      "kind": "Théorème",
+      "title": "Les sous-espaces propres sont en somme directe",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Si $\\lambda_1, \\dots, \\lambda_p$ sont des valeurs propres de $u$ **deux à deux distinctes**, alors la somme $E_{\\lambda_1}(u) + \\dots + E_{\\lambda_p}(u)$ est directe.\n**Corollaires.** Une famille de vecteurs propres associés à des valeurs propres deux à deux distinctes est libre. En dimension $n$, $u$ a au plus $n$ valeurs propres.",
+      "hypotheses": [
+        "Les valeurs propres sont **deux à deux distinctes**."
+      ],
+      "idea": "Récurrence sur $p$ : on applique $u$ à une relation $x_1 + \\dots + x_p = 0$, puis on retranche $\\lambda_p$ fois la relation de départ pour éliminer $x_p$.",
+      "counterexamples": [],
+      "pitfalls": [
+        "La somme est directe, mais elle n'est pas toujours égale à $E$ : l'égalité $E = \\bigoplus_\\lambda E_\\lambda(u)$ caractérise les endomorphismes diagonalisables."
+      ],
+      "notations": [],
+      "examples": [
+        "Pour $A = \\begin{pmatrix}1&1\\\\0&2\\end{pmatrix}$ : $(1,0)$ et $(1,1)$ sont vecteurs propres associés à $1$ et $2$. Ils forment une famille libre, donc une base de $\\mathbb{K}^2$."
+      ],
+      "prereqs": [
+        "p-recurrence",
+        "p-sev",
+        "n-elements-propres"
+      ],
+      "proofSteps": [
+        "Pour $p \\geq 1$, on note $\\mathcal{P}(p)$ : « pour toutes valeurs propres $\\lambda_1, \\dots, \\lambda_p$ de $u$ deux à deux distinctes et tous $x_1 \\in E_{\\lambda_1}(u), \\dots, x_p \\in E_{\\lambda_p}(u)$, si $x_1 + \\dots + x_p = 0$ alors $x_1 = \\dots = x_p = 0$ ». C'est la définition d'une somme directe.",
+        "**Initialisation.** $\\mathcal{P}(1)$ est vraie : la relation se réduit à $x_1 = 0$.",
+        "**Hérédité.** Soit $p \\geq 2$ tel que $\\mathcal{P}(p-1)$ soit vraie. Soient $\\lambda_1, \\dots, \\lambda_p$ des valeurs propres deux à deux distinctes et $x_i \\in E_{\\lambda_i}(u)$ tels que $x_1 + \\dots + x_p = 0$ $(1)$.",
+        "En appliquant $u$, linéaire, à $(1)$ et en utilisant $u(x_i) = \\lambda_i x_i$ : $\\lambda_1 x_1 + \\dots + \\lambda_p x_p = 0$ $(2)$.",
+        "La combinaison $(2) - \\lambda_p \\cdot (1)$ donne $\\sum_{i=1}^{p-1} (\\lambda_i - \\lambda_p)\\, x_i = 0$.",
+        "Pour $i \\leq p-1$, le vecteur $(\\lambda_i - \\lambda_p)\\, x_i$ appartient à $E_{\\lambda_i}(u)$, qui est un sous-espace vectoriel. D'après $\\mathcal{P}(p-1)$, appliquée à $\\lambda_1, \\dots, \\lambda_{p-1}$, on a donc $(\\lambda_i - \\lambda_p)\\, x_i = 0$ pour tout $i \\leq p-1$.",
+        "Comme $\\lambda_i \\neq \\lambda_p$, on en déduit $x_i = 0$ pour tout $i \\leq p-1$. En reportant dans $(1)$ : $x_p = 0$. Donc $\\mathcal{P}(p)$ est vraie, ce qui achève la récurrence.",
+        "**Corollaires.** Si $x_1, \\dots, x_p$ sont des vecteurs propres associés à des valeurs propres deux à deux distinctes et si $\\sum a_i x_i = 0$, alors $a_i x_i = 0$ pour tout $i$ (somme directe), donc $a_i = 0$ puisque $x_i \\neq 0$ : la famille est libre. Une famille libre de $E$ a au plus $n$ vecteurs, donc $u$ a au plus $n$ valeurs propres."
+      ]
+    },
+    {
+      "id": "n-commutation",
+      "lesson": "l1",
+      "kind": "Proposition",
+      "title": "Endomorphismes qui commutent",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Si $u \\circ v = v \\circ u$, alors tout sous-espace propre de $u$ est stable par $v$. Il en va de même de $\\operatorname{Ker} u$ et de $\\operatorname{Im} u$.",
+      "hypotheses": [
+        "$u$ et $v$ **commutent**."
+      ],
+      "idea": "Si $u(x) = \\lambda x$, alors $u(v(x)) = v(u(x)) = \\lambda\\, v(x)$, donc $v(x) \\in E_\\lambda(u)$.",
+      "counterexamples": [],
+      "pitfalls": [
+        "Commuter ne signifie pas avoir les mêmes vecteurs propres : $\\mathrm{Id}_E$ commute avec tout endomorphisme, et tout vecteur non nul est vecteur propre de $\\mathrm{Id}_E$."
+      ],
+      "notations": [],
+      "examples": [
+        "Tout polynôme en $u$ commute avec $u$ : les sous-espaces propres de $u$ sont donc stables par $P(u)$ pour tout $P \\in \\mathbb{K}[X]$."
+      ],
+      "prereqs": [
+        "p-sev",
+        "n-elements-propres"
+      ],
+      "proofSteps": [
+        "Soient $\\lambda$ une valeur propre de $u$ et $x \\in E_\\lambda(u)$, c'est-à-dire $u(x) = \\lambda x$.",
+        "Alors $u(v(x)) = v(u(x)) = v(\\lambda x) = \\lambda\\, v(x)$, en utilisant $u \\circ v = v \\circ u$ puis la linéarité de $v$. Donc $v(x) \\in E_\\lambda(u)$ : le sous-espace $E_\\lambda(u)$ est stable par $v$.",
+        "**Noyau.** Si $x \\in \\operatorname{Ker} u$, alors $u(v(x)) = v(u(x)) = v(0) = 0$, donc $v(x) \\in \\operatorname{Ker} u$.",
+        "**Image.** Si $y \\in \\operatorname{Im} u$, il existe $x \\in E$ tel que $y = u(x)$ ; alors $v(y) = v(u(x)) = u(v(x)) \\in \\operatorname{Im} u$."
+      ]
+    },
+    {
+      "id": "n-poly-car",
+      "lesson": "l2",
+      "kind": "Définition",
+      "title": "Polynôme caractéristique",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": "prog-mp",
+      "statement": "Le polynôme caractéristique de $A$ est $\\chi_A = \\det(X I_n - A)$. Il est **unitaire de degré $n$** et\n$$\\chi_A = X^n - \\operatorname{tr}(A)\\,X^{n-1} + \\dots + (-1)^n \\det(A).$$\nDeux matrices semblables ont le même polynôme caractéristique, ce qui permet de définir $\\chi_u$.",
+      "hypotheses": [],
+      "idea": "Pour $n = 2$ : $\\chi_A = X^2 - \\operatorname{tr}(A)\\,X + \\det(A)$.",
+      "counterexamples": [
+        "La réciproque est fausse : $I_2$ et $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ ont le même polynôme caractéristique $(X-1)^2$ sans être semblables, car la seule matrice semblable à $I_2$ est $I_2$."
+      ],
+      "pitfalls": [
+        "Le terme constant est $(-1)^n \\det(A)$ et non $\\det(A)$ : il vaut $\\chi_A(0) = \\det(-A)$."
+      ],
+      "notations": [
+        "De nombreux ouvrages posent $\\det(A - X I_n)$, qui vaut $(-1)^n \\chi_A$ : mêmes racines, mais polynôme non unitaire quand $n$ est impair. Le programme actuel retient $\\det(X I_n - A)$."
+      ],
+      "examples": [
+        "Pour $A = \\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$ : $\\operatorname{tr}(A) = 5$ et $\\det(A) = -2$, donc $\\chi_A = X^2 - 5X - 2$.",
+        "Pour une matrice triangulaire de coefficients diagonaux $a_1, \\dots, a_n$ : $\\chi_A = \\prod_{i=1}^{n} (X - a_i)$."
+      ],
+      "prereqs": [
+        "p-determinant",
+        "p-polynomes"
+      ],
+      "proofSteps": null
+    },
+    {
+      "id": "n-multiplicites",
+      "lesson": "l2",
+      "kind": "Théorème",
+      "title": "Racines du polynôme caractéristique et multiplicités",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Les valeurs propres de $u$ sont exactement les racines de $\\chi_u$ dans $\\mathbb{K}$. Si $\\lambda$ est valeur propre de multiplicité $m(\\lambda)$ dans $\\chi_u$, alors\n$$1 \\leq \\dim E_\\lambda(u) \\leq m(\\lambda).$$",
+      "hypotheses": [
+        "Les racines sont prises **dans $\\mathbb{K}$**."
+      ],
+      "idea": "$E_\\lambda(u)$ est stable par $u$ et l'endomorphisme induit y est une homothétie : son polynôme caractéristique $(X - \\lambda)^{\\dim E_\\lambda}$ divise $\\chi_u$.",
+      "counterexamples": [
+        "Pour $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ : $m(1) = 2$ mais $\\dim E_1 = 1$. L'inégalité peut être stricte."
+      ],
+      "pitfalls": [
+        "Ne pas confondre la multiplicité $m(\\lambda)$ (dans $\\chi_u$) et la dimension de $E_\\lambda(u)$.",
+        "Sur $\\mathbb{C}$, toute matrice a au moins une valeur propre. Sur $\\mathbb{R}$, c'est garanti seulement en dimension impaire."
+      ],
+      "notations": [
+        "On dit aussi multiplicité **algébrique** pour $m(\\lambda)$ et multiplicité **géométrique** pour $\\dim E_\\lambda(u)$."
+      ],
+      "examples": [
+        "Pour $A = \\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&2\\end{pmatrix}$ : $m(1) = 2 = \\dim E_1(A)$ et $m(2) = 1 = \\dim E_2(A)$."
+      ],
+      "prereqs": [
+        "p-polynomes",
+        "p-determinant",
+        "n-poly-car"
+      ],
+      "proofSteps": [
+        "**Racines.** Soit $\\lambda \\in \\mathbb{K}$. Comme $E$ est de dimension finie, $\\lambda$ est valeur propre de $u$ si et seulement si $\\lambda\\,\\mathrm{Id}_E - u$ n'est pas injectif, si et seulement s'il n'est pas inversible, si et seulement si $\\det(\\lambda\\,\\mathrm{Id}_E - u) = 0$, c'est-à-dire $\\chi_u(\\lambda) = 0$.",
+        "**Minoration.** Si $\\lambda$ est valeur propre, $E_\\lambda(u) \\neq \\{0\\}$, donc $d = \\dim E_\\lambda(u) \\geq 1$.",
+        "**Majoration.** On choisit une base $(e_1, \\dots, e_d)$ de $E_\\lambda(u)$, complétée en une base $\\mathcal{B}$ de $E$. Comme $u(e_i) = \\lambda e_i$ pour $i \\leq d$, la matrice de $u$ dans $\\mathcal{B}$ est triangulaire par blocs : $$M = \\begin{pmatrix} \\lambda I_d & B \\\\ 0 & C \\end{pmatrix}, \\quad C \\in \\mathcal{M}_{n-d}(\\mathbb{K}).$$",
+        "Le déterminant d'une matrice triangulaire par blocs est le produit des déterminants des blocs diagonaux : $\\chi_u = \\det(X I_n - M) = (X - \\lambda)^d\\, \\chi_C$.",
+        "Ainsi $(X - \\lambda)^d$ divise $\\chi_u$, donc $d \\leq m(\\lambda)$ par définition de la multiplicité."
+      ]
+    },
+    {
+      "id": "n-cayley-hamilton",
+      "lesson": "l2",
+      "kind": "Théorème",
+      "title": "Théorème de Cayley-Hamilton",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "non-exigible",
+      "source": "prog-mp",
+      "statement": "Le polynôme caractéristique annule l'endomorphisme : $\\chi_u(u) = 0$, et de même $\\chi_A(A) = 0$.",
+      "hypotheses": [
+        "$E$ est de **dimension finie**."
+      ],
+      "idea": "La démonstration n'est pas exigible en MP. Conséquence à retenir : le polynôme minimal divise $\\chi_u$, donc son degré est au plus $n$.",
+      "counterexamples": [],
+      "pitfalls": [
+        "La « preuve » $\\chi_A(A) = \\det(A I_n - A) = \\det(0) = 0$ est fausse : on ne peut pas remplacer $X$ par $A$ à l'intérieur du déterminant. D'ailleurs $\\chi_A(A)$ est une matrice alors que $\\det(\\cdot)$ est un scalaire."
+      ],
+      "notations": [],
+      "examples": [
+        "Pour $A = \\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$ : $\\chi_A = X^2 - 5X - 2$, donc $A^2 - 5A - 2I_2 = 0$. On en tire $A(A - 5I_2) = 2I_2$, soit $A^{-1} = \\tfrac{1}{2}(A - 5I_2)$."
+      ],
+      "prereqs": [
+        "n-poly-car"
+      ],
+      "proofSteps": null
+    },
+    {
+      "id": "n-diagonalisable",
+      "lesson": "l3",
+      "kind": "Théorème",
+      "title": "Critères de diagonalisabilité",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "$u$ est **diagonalisable** s'il existe une base de $E$ formée de vecteurs propres de $u$. Sont équivalents :\n(i) $u$ est diagonalisable ;\n(ii) $E = \\bigoplus_{\\lambda \\in \\operatorname{Sp}(u)} E_\\lambda(u)$ ;\n(iii) $\\sum_{\\lambda \\in \\operatorname{Sp}(u)} \\dim E_\\lambda(u) = n$ ;\n(iv) $\\chi_u$ est **scindé sur $\\mathbb{K}$** et $\\dim E_\\lambda(u) = m(\\lambda)$ pour toute valeur propre $\\lambda$.",
+      "hypotheses": [
+        "Dans (iv), les **deux** conditions comptent : $\\chi_u$ scindé sur $\\mathbb{K}$ **et** égalité des dimensions."
+      ],
+      "idea": "La somme des sous-espaces propres est toujours directe ; elle vaut $E$ exactement quand les dimensions s'ajoutent à $n$.",
+      "counterexamples": [
+        "Sans « scindé » : $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ sur $\\mathbb{R}$ n'a aucune valeur propre réelle, donc la condition sur les dimensions est vide, et pourtant la matrice n'est pas diagonalisable sur $\\mathbb{R}$.",
+        "Sans l'égalité des dimensions : $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ a un polynôme caractéristique scindé mais n'est pas diagonalisable."
+      ],
+      "pitfalls": [
+        "« Diagonalisable » dépend du corps : $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ est diagonalisable sur $\\mathbb{C}$ mais pas sur $\\mathbb{R}$. Le jury de l'agrégation demande de toujours préciser le corps."
+      ],
+      "notations": [
+        "Version matricielle : $A$ est diagonalisable s'il existe $P \\in \\mathrm{GL}_n(\\mathbb{K})$ telle que $P^{-1} A P$ soit diagonale."
+      ],
+      "examples": [
+        "Pour $A = \\begin{pmatrix}1&1\\\\0&2\\end{pmatrix}$ et $P = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ (colonnes : vecteurs propres associés à $1$ et $2$) : $P^{-1} A P = \\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}$."
+      ],
+      "prereqs": [
+        "n-somme-directe",
+        "n-multiplicites"
+      ],
+      "proofSteps": [
+        "On note $F = \\sum_{\\lambda \\in \\operatorname{Sp}(u)} E_\\lambda(u)$. Cette somme est directe (théorème de la leçon 1), donc $\\dim F = \\sum_\\lambda \\dim E_\\lambda(u)$.",
+        "**(i) $\\Rightarrow$ (ii).** Si $E$ possède une base de vecteurs propres, chaque vecteur de cette base appartient à un sous-espace propre, donc à $F$. Ainsi $F = E$, et la somme est directe.",
+        "**(ii) $\\Rightarrow$ (i).** En réunissant des bases des $E_\\lambda(u)$, on obtient une base de $E$ adaptée à la somme directe ; elle est formée de vecteurs propres.",
+        "**(ii) $\\Leftrightarrow$ (iii).** $F$ est un sous-espace de $E$, donc $F = E$ si et seulement si $\\dim F = n$, c'est-à-dire $\\sum_\\lambda \\dim E_\\lambda(u) = n$.",
+        "**(i) $\\Rightarrow$ (iv).** Dans une base de vecteurs propres, la matrice de $u$ est diagonale et chaque valeur propre $\\lambda$ y figure exactement $\\dim E_\\lambda(u)$ fois. Donc $\\chi_u = \\prod_\\lambda (X - \\lambda)^{\\dim E_\\lambda(u)}$ : il est scindé sur $\\mathbb{K}$ et $m(\\lambda) = \\dim E_\\lambda(u)$.",
+        "**(iv) $\\Rightarrow$ (iii).** $\\chi_u$ est scindé et de degré $n$, donc la somme des multiplicités de ses racines vaut $n$ : $\\sum_\\lambda \\dim E_\\lambda(u) = \\sum_\\lambda m(\\lambda) = n$."
+      ]
+    },
+    {
+      "id": "n-vp-distinctes",
+      "lesson": "l3",
+      "kind": "Proposition",
+      "title": "Cas de n valeurs propres distinctes",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Si $u$ possède $n$ valeurs propres deux à deux distinctes (c'est-à-dire si $\\chi_u$ est scindé à racines simples), alors $u$ est diagonalisable et chaque sous-espace propre est une droite.",
+      "hypotheses": [
+        "**$n$** valeurs propres distinctes, où $n = \\dim E$."
+      ],
+      "idea": "$n$ vecteurs propres associés à des valeurs propres distinctes forment une famille libre de $n$ vecteurs, donc une base.",
+      "counterexamples": [],
+      "pitfalls": [
+        "C'est une condition **suffisante**, pas nécessaire : $\\mathrm{Id}_E$ est diagonalisable avec une seule valeur propre."
+      ],
+      "notations": [],
+      "examples": [
+        "$\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$ a pour polynôme caractéristique $X^2 - 1$ : deux valeurs propres distinctes $1$ et $-1$ en dimension 2, donc elle est diagonalisable."
+      ],
+      "prereqs": [
+        "n-somme-directe",
+        "n-diagonalisable"
+      ],
+      "proofSteps": [
+        "Soient $\\lambda_1, \\dots, \\lambda_n$ les valeurs propres, deux à deux distinctes, et pour chaque $i$ un vecteur propre $x_i$ associé à $\\lambda_i$.",
+        "La famille $(x_1, \\dots, x_n)$ est libre (corollaire du théorème sur la somme directe des sous-espaces propres). Elle compte $n = \\dim E$ vecteurs : c'est une base de $E$, formée de vecteurs propres. Donc $u$ est diagonalisable.",
+        "Enfin $\\dim E_{\\lambda_i}(u) \\geq 1$ pour tout $i$ et $\\sum_i \\dim E_{\\lambda_i}(u) \\leq n$ (somme directe dans $E$) : chaque dimension vaut exactement $1$."
+      ]
+    },
+    {
+      "id": "n-exemples-diag",
+      "lesson": "l3",
+      "kind": "Exemples",
+      "title": "Exemples à connaître",
+      "status": "programme",
+      "level": "cpge",
+      "proof": null,
+      "source": "jury-2024",
+      "statement": "Les **projecteurs** ($p \\circ p = p$) et les **symétries** ($s \\circ s = \\mathrm{Id}_E$) sont diagonalisables, de spectres inclus dans $\\{0, 1\\}$ et $\\{-1, 1\\}$.\nToute matrice **symétrique réelle** est diagonalisable sur $\\mathbb{R}$ (théorème spectral).",
+      "hypotheses": [
+        "Pour le théorème spectral : coefficients **réels**."
+      ],
+      "idea": "Pour un projecteur, $E = \\operatorname{Ker}(p) \\oplus \\operatorname{Im}(p)$ avec $\\operatorname{Im}(p) = \\operatorname{Ker}(p - \\mathrm{Id}_E)$.",
+      "counterexamples": [
+        "Une matrice symétrique **complexe** n'est pas toujours diagonalisable : $\\begin{pmatrix}1&i\\\\i&-1\\end{pmatrix}$ est non nulle et de carré nul."
+      ],
+      "pitfalls": [
+        "Une matrice triangulaire n'est pas forcément diagonalisable ; elle l'est si ses coefficients diagonaux sont deux à deux distincts."
+      ],
+      "notations": [],
+      "examples": [
+        "La symétrie $s : (x, y) \\mapsto (y, x)$ de $\\mathbb{R}^2$ : $E_1(s) = \\operatorname{Vect}((1,1))$ et $E_{-1}(s) = \\operatorname{Vect}((1,-1))$.",
+        "$\\begin{pmatrix}1&2\\\\2&1\\end{pmatrix}$ est symétrique réelle, donc diagonalisable sur $\\mathbb{R}$ ; ses valeurs propres sont $3$ et $-1$."
+      ],
+      "prereqs": [
+        "n-diagonalisable"
+      ],
+      "proofSteps": null
+    },
+    {
+      "id": "n-poly-minimal",
+      "lesson": "l4",
+      "kind": "Définition",
+      "title": "Polynôme annulateur, polynôme minimal",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "$P \\in \\mathbb{K}[X]$ est **annulateur** de $u$ si $P(u) = 0$. En dimension finie, il existe un unique polynôme unitaire $\\pi_u$, le **polynôme minimal**, tel que\n$$P(u) = 0 \\iff \\pi_u \\text{ divise } P.$$\nSi $d = \\deg \\pi_u$, alors $(\\mathrm{Id}_E, u, \\dots, u^{d-1})$ est une base de $\\mathbb{K}[u]$.",
+      "hypotheses": [
+        "$E$ est de **dimension finie** (pour l'existence d'un annulateur non nul)."
+      ],
+      "idea": "$P \\mapsto P(u)$ est un morphisme d'algèbres de $\\mathbb{K}[X]$ dans $\\mathcal{L}(E)$. Son noyau est un idéal non nul, car $\\mathcal{L}(E)$ est de dimension finie ; $\\pi_u$ est son générateur unitaire.",
+      "counterexamples": [
+        "En dimension infinie, la dérivation $D : P \\mapsto P'$ sur $\\mathbb{K}[X]$ n'a aucun polynôme annulateur non nul."
+      ],
+      "pitfalls": [
+        "Le polynôme minimal n'est pas toujours égal au polynôme caractéristique : pour $I_n$, $\\pi = X - 1$ et $\\chi = (X-1)^n$."
+      ],
+      "notations": [
+        "On rencontre $\\pi_u$, $\\mu_u$ ou $m_u$ selon les auteurs."
+      ],
+      "examples": [
+        "Pour un projecteur $p$ distinct de $0$ et de $\\mathrm{Id}_E$ : $\\pi_p = X^2 - X$.",
+        "Pour un endomorphisme nilpotent d'indice $p$ : $\\pi_u = X^p$."
+      ],
+      "prereqs": [
+        "p-polynomes",
+        "p-sev"
+      ],
+      "proofSteps": [
+        "**Existence d'un annulateur non nul.** $\\mathcal{L}(E)$ est de dimension $n^2$, donc la famille $(\\mathrm{Id}_E, u, u^2, \\dots, u^{n^2})$, qui compte $n^2 + 1$ éléments, est liée : il existe $a_0, \\dots, a_{n^2}$ non tous nuls tels que $\\sum_k a_k u^k = 0$. Le polynôme $\\sum_k a_k X^k$ est non nul et annule $u$.",
+        "**Polynôme minimal.** L'ensemble $I$ des polynômes annulateurs est le noyau du morphisme d'algèbres $P \\mapsto P(u)$ : c'est un idéal de $\\mathbb{K}[X]$, non réduit à $\\{0\\}$. Tout idéal de $\\mathbb{K}[X]$ étant engendré par un seul polynôme, $I$ possède un unique générateur unitaire, noté $\\pi_u$. Par définition, $P(u) = 0$ si et seulement si $\\pi_u$ divise $P$.",
+        "**Famille génératrice.** Soit $P \\in \\mathbb{K}[X]$. La division euclidienne $P = \\pi_u Q + R$ avec $\\deg R < d$ donne $P(u) = R(u)$, combinaison linéaire de $\\mathrm{Id}_E, u, \\dots, u^{d-1}$.",
+        "**Famille libre.** Une relation $\\sum_{k < d} a_k u^k = 0$ à coefficients non tous nuls fournirait un polynôme annulateur non nul de degré strictement inférieur à $d$, donc non multiple de $\\pi_u$ : contradiction."
+      ]
+    },
+    {
+      "id": "n-vp-annulateur",
+      "lesson": "l4",
+      "kind": "Proposition",
+      "title": "Valeurs propres et polynômes annulateurs",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Si $u(x) = \\lambda x$, alors $P(u)(x) = P(\\lambda)\\,x$ pour tout polynôme $P$. En particulier, si $P$ annule $u$, **toute valeur propre de $u$ est racine de $P$**.\nLes racines de $\\pi_u$ dans $\\mathbb{K}$ sont exactement les valeurs propres de $u$.",
+      "hypotheses": [],
+      "idea": "Par récurrence $u^k(x) = \\lambda^k x$, puis on conclut par linéarité.",
+      "counterexamples": [
+        "$X(X-1)$ annule $\\mathrm{Id}_E$, mais $0$ n'est pas valeur propre de $\\mathrm{Id}_E$."
+      ],
+      "pitfalls": [
+        "L'inclusion va dans un seul sens : $\\operatorname{Sp}(u) \\subset \\{\\text{racines de } P\\}$. Une racine d'un polynôme annulateur n'est pas forcément valeur propre."
+      ],
+      "notations": [],
+      "examples": [
+        "Si $A^2 = A$, alors $X^2 - X$ annule $A$, donc $\\operatorname{Sp}(A) \\subset \\{0, 1\\}$."
+      ],
+      "prereqs": [
+        "n-elements-propres",
+        "n-poly-minimal",
+        "p-recurrence"
+      ],
+      "proofSteps": [
+        "Soit $x$ tel que $u(x) = \\lambda x$. Montrons par récurrence que $u^k(x) = \\lambda^k x$ pour tout $k \\in \\mathbb{N}$. Pour $k = 0$ : $u^0(x) = x$. Si $u^k(x) = \\lambda^k x$, alors $u^{k+1}(x) = u(\\lambda^k x) = \\lambda^k u(x) = \\lambda^{k+1} x$.",
+        "Pour $P = \\sum_k a_k X^k$, la linéarité donne $P(u)(x) = \\sum_k a_k u^k(x) = \\sum_k a_k \\lambda^k x = P(\\lambda)\\, x$.",
+        "Si $P(u) = 0$ et si $\\lambda$ est valeur propre, on choisit un vecteur propre $x \\neq 0$ : $0 = P(u)(x) = P(\\lambda)\\,x$, donc $P(\\lambda) = 0$.",
+        "**Racines de $\\pi_u$.** Par ce qui précède, toute valeur propre est racine de $\\pi_u$. Réciproquement, soit $\\lambda \\in \\mathbb{K}$ une racine de $\\pi_u$ : $\\pi_u = (X - \\lambda)\\,Q$ avec $Q \\neq 0$ et $\\deg Q < \\deg \\pi_u$. Si $\\lambda$ n'était pas valeur propre, $u - \\lambda\\,\\mathrm{Id}_E$ serait injectif, donc inversible (dimension finie) ; de $(u - \\lambda\\,\\mathrm{Id}_E) \\circ Q(u) = \\pi_u(u) = 0$ on tirerait $Q(u) = 0$, ce qui contredit la minimalité du degré de $\\pi_u$."
+      ]
+    },
+    {
+      "id": "n-lemme-noyaux",
+      "lesson": "l4",
+      "kind": "Théorème",
+      "title": "Lemme de décomposition des noyaux",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Soient $P_1, \\dots, P_r \\in \\mathbb{K}[X]$ **deux à deux premiers entre eux** et $P = P_1 \\cdots P_r$. Alors\n$$\\operatorname{Ker} P(u) = \\bigoplus_{i=1}^{r} \\operatorname{Ker} P_i(u).$$",
+      "hypotheses": [
+        "Les $P_i$ sont **deux à deux premiers entre eux**."
+      ],
+      "idea": "Pour $r = 2$ : une relation de Bézout $A P_1 + B P_2 = 1$ donne $\\mathrm{Id}_E = A(u) \\circ P_1(u) + B(u) \\circ P_2(u)$, qui fournit à la fois la décomposition et son unicité. Les projecteurs associés sont des polynômes en $u$.",
+      "counterexamples": [
+        "Avec $P_1 = P_2 = X$ et $u$ nilpotent d'indice 2 : $\\operatorname{Ker} u^2 = E$, alors que $\\operatorname{Ker} u + \\operatorname{Ker} u = \\operatorname{Ker} u \\neq E$."
+      ],
+      "pitfalls": [
+        "Le lemme ne demande ni que $P$ annule $u$, ni que $E$ soit de dimension finie."
+      ],
+      "notations": [
+        "On dit aussi « lemme des noyaux »."
+      ],
+      "examples": [
+        "Pour un projecteur $p$ : $X^2 - X = X(X - 1)$ annule $p$, et $X$ et $X - 1$ sont premiers entre eux. Donc $E = \\operatorname{Ker} p \\oplus \\operatorname{Ker}(p - \\mathrm{Id}_E)$.",
+        "Si $u^3 = u$ : $X^3 - X = X(X-1)(X+1)$, donc $E = \\operatorname{Ker} u \\oplus \\operatorname{Ker}(u - \\mathrm{Id}_E) \\oplus \\operatorname{Ker}(u + \\mathrm{Id}_E)$."
+      ],
+      "prereqs": [
+        "p-polynomes",
+        "p-sev",
+        "p-recurrence"
+      ],
+      "proofSteps": [
+        "**Cas $r = 2$.** Soient $P_1, P_2$ premiers entre eux et $P = P_1 P_2$. D'après le théorème de Bézout, il existe $A, B \\in \\mathbb{K}[X]$ tels que $A P_1 + B P_2 = 1$. En évaluant en $u$ : $\\mathrm{Id}_E = A(u) \\circ P_1(u) + B(u) \\circ P_2(u)$ $(\\ast)$. On rappelle que deux polynômes en $u$ commutent.",
+        "**Inclusion $\\supset$.** Si $x \\in \\operatorname{Ker} P_1(u)$, alors $P(u)(x) = P_2(u)\\big(P_1(u)(x)\\big) = 0$. De même pour $\\operatorname{Ker} P_2(u)$. Donc $\\operatorname{Ker} P_1(u) + \\operatorname{Ker} P_2(u) \\subset \\operatorname{Ker} P(u)$.",
+        "**Somme directe.** Si $x \\in \\operatorname{Ker} P_1(u) \\cap \\operatorname{Ker} P_2(u)$, alors $(\\ast)$ appliquée à $x$ donne $x = A(u)\\big(P_1(u)(x)\\big) + B(u)\\big(P_2(u)(x)\\big) = 0$.",
+        "**Inclusion $\\subset$.** Soit $x \\in \\operatorname{Ker} P(u)$. On pose $y = (B P_2)(u)(x)$ et $z = (A P_1)(u)(x)$. D'après $(\\ast)$, $x = y + z$. De plus $P_1(u)(y) = B(u)\\big(P(u)(x)\\big) = 0$ et $P_2(u)(z) = A(u)\\big(P(u)(x)\\big) = 0$. Donc $y \\in \\operatorname{Ker} P_1(u)$ et $z \\in \\operatorname{Ker} P_2(u)$.",
+        "**Cas général.** Par récurrence sur $r \\geq 2$. Si $P_1, \\dots, P_r$ sont deux à deux premiers entre eux, alors $P_1$ est premier avec le produit $P_2 \\cdots P_r$. Le cas $r = 2$ donne $\\operatorname{Ker} P(u) = \\operatorname{Ker} P_1(u) \\oplus \\operatorname{Ker} (P_2 \\cdots P_r)(u)$, et l'hypothèse de récurrence décompose le second terme."
+      ]
+    },
+    {
+      "id": "n-critere-annulateur",
+      "lesson": "l4",
+      "kind": "Théorème",
+      "title": "Diagonalisabilité et polynômes annulateurs",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "Sont équivalents :\n(i) $u$ est diagonalisable ;\n(ii) $u$ admet un polynôme annulateur **scindé sur $\\mathbb{K}$ à racines simples** ;\n(iii) $\\pi_u$ est scindé sur $\\mathbb{K}$ à racines simples.\n**Conséquence.** Si $u$ est diagonalisable et $F$ est stable par $u$, l'endomorphisme induit $u_F$ est diagonalisable.",
+      "hypotheses": [
+        "Le polynôme est **scindé sur $\\mathbb{K}$**.",
+        "Ses racines sont **simples**."
+      ],
+      "idea": "Sens réciproque : le lemme des noyaux appliqué à $\\prod (X - \\lambda_i)$ donne $E = \\bigoplus \\operatorname{Ker}(u - \\lambda_i \\mathrm{Id}_E)$. Pour $u_F$ : $\\pi_u$ annule $u_F$.",
+      "counterexamples": [
+        "Scindé sans racines simples : $X^2$ annule un nilpotent d'indice 2, qui n'est pas diagonalisable.",
+        "Racines simples sans être scindé sur $\\mathbb{K}$ : $X^2 + 1$ annule $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$, qui n'est pas diagonalisable sur $\\mathbb{R}$."
+      ],
+      "pitfalls": [
+        "Il suffit d'**un** polynôme annulateur scindé à racines simples ; nul besoin de calculer $\\pi_u$ ou $\\chi_u$."
+      ],
+      "notations": [],
+      "examples": [
+        "Si $A^3 = A$ : $X^3 - X = X(X-1)(X+1)$ est annulateur, scindé à racines simples. Donc $A$ est diagonalisable (sur $\\mathbb{R}$ comme sur $\\mathbb{C}$).",
+        "Si $A \\in \\mathcal{M}_n(\\mathbb{C})$ vérifie $A^p = I_n$ avec $p \\geq 1$ : $X^p - 1$ a $p$ racines distinctes dans $\\mathbb{C}$, donc $A$ est diagonalisable sur $\\mathbb{C}$."
+      ],
+      "prereqs": [
+        "n-lemme-noyaux",
+        "n-vp-annulateur",
+        "n-diagonalisable"
+      ],
+      "proofSteps": [
+        "**(i) $\\Rightarrow$ (iii).** Soient $\\lambda_1, \\dots, \\lambda_r$ les valeurs propres distinctes de $u$, et $P = \\prod_{i=1}^{r} (X - \\lambda_i)$. Pour $x \\in E_{\\lambda_i}(u)$, on a $P(u)(x) = 0$ : les facteurs commutent et $(u - \\lambda_i \\mathrm{Id}_E)(x) = 0$. Comme $u$ est diagonalisable, $E = \\bigoplus_i E_{\\lambda_i}(u)$, donc $P(u) = 0$ par linéarité. Ainsi $\\pi_u$ divise $P$ ; diviseur d'un polynôme scindé à racines simples, il l'est aussi.",
+        "**(iii) $\\Rightarrow$ (ii).** $\\pi_u$ est lui-même un polynôme annulateur.",
+        "**(ii) $\\Rightarrow$ (i).** Soit $P = c \\prod_{j=1}^{s} (X - \\mu_j)$ un annulateur, avec $c \\neq 0$ et les $\\mu_j$ deux à deux distincts. Les polynômes $X - \\mu_j$ sont deux à deux premiers entre eux. Le lemme des noyaux donne $E = \\operatorname{Ker} P(u) = \\bigoplus_{j} \\operatorname{Ker}(u - \\mu_j \\mathrm{Id}_E)$.",
+        "Chaque $\\operatorname{Ker}(u - \\mu_j \\mathrm{Id}_E)$ non réduit à $\\{0\\}$ est un sous-espace propre de $u$. Donc $E$ est somme de sous-espaces propres : $u$ est diagonalisable.",
+        "**Endomorphisme induit.** Si $F$ est stable par $u$, alors $P(u_F)$ est l'endomorphisme induit par $P(u)$ sur $F$, pour tout polynôme $P$. En particulier $\\pi_u(u_F) = 0$ : $u_F$ admet un annulateur scindé à racines simples, donc est diagonalisable."
+      ]
+    },
+    {
+      "id": "n-trigonalisable",
+      "lesson": "l5",
+      "kind": "Théorème",
+      "title": "Trigonalisation",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "$u$ est **trigonalisable** s'il existe une base dans laquelle sa matrice est triangulaire supérieure. C'est le cas **si et seulement si $\\chi_u$ est scindé sur $\\mathbb{K}$**. En particulier, tout endomorphisme d'un $\\mathbb{C}$-espace vectoriel de dimension finie est trigonalisable.\nSi $\\chi_u = \\prod_{i=1}^{n} (X - \\lambda_i)$, alors $\\operatorname{tr}(u) = \\sum \\lambda_i$ et $\\det(u) = \\prod \\lambda_i$.",
+      "hypotheses": [
+        "$\\chi_u$ est **scindé sur $\\mathbb{K}$**."
+      ],
+      "idea": "Récurrence sur $n$ : un polynôme scindé a une racine, donc $u$ a un vecteur propre ; on le complète en une base et on applique l'hypothèse de récurrence au bloc restant.",
+      "counterexamples": [
+        "$\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ n'est pas trigonalisable sur $\\mathbb{R}$ : son polynôme caractéristique $X^2 + 1$ n'a pas de racine réelle."
+      ],
+      "pitfalls": [
+        "Pour une matrice réelle, la trace est la somme des valeurs propres **complexes** comptées avec multiplicité, pas des seules valeurs propres réelles.",
+        "En MP, la pratique de la trigonalisation n'est pas un objectif au-delà de cas simples ; la réduction de Jordan est hors programme."
+      ],
+      "notations": [
+        "Certains auteurs disent « triangularisable »."
+      ],
+      "examples": [
+        "$A = \\begin{pmatrix}2&1\\\\-1&0\\end{pmatrix}$ : $\\chi_A = (X-1)^2$ est scindé. Avec $e_1 = (1,-1)$ (vecteur propre) et $e_2 = (1,0)$, on a $A e_2 = e_1 + e_2$ : dans la base $(e_1, e_2)$, la matrice devient $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$."
+      ],
+      "prereqs": [
+        "p-recurrence",
+        "n-multiplicites",
+        "p-determinant"
+      ],
+      "proofSteps": [
+        "**Sens direct.** Si $u$ a une matrice triangulaire $T$ de coefficients diagonaux $t_1, \\dots, t_n$, alors $\\chi_u = \\det(X I_n - T) = \\prod_{i} (X - t_i)$ : il est scindé sur $\\mathbb{K}$.",
+        "**Réciproque, forme matricielle.** Pour $n \\geq 1$, on note $\\mathcal{P}(n)$ : « toute matrice de $\\mathcal{M}_n(\\mathbb{K})$ dont le polynôme caractéristique est scindé sur $\\mathbb{K}$ est semblable à une matrice triangulaire supérieure ». $\\mathcal{P}(1)$ est évidente.",
+        "**Hérédité.** Soit $n \\geq 2$ tel que $\\mathcal{P}(n-1)$ soit vraie, et $A \\in \\mathcal{M}_n(\\mathbb{K})$ avec $\\chi_A$ scindé. Comme $\\chi_A$ est scindé de degré $n \\geq 1$, il a une racine $\\lambda \\in \\mathbb{K}$, qui est valeur propre de $A$. On choisit un vecteur propre associé et on le complète en une base de $\\mathbb{K}^n$ : $A$ est semblable à $$\\begin{pmatrix} \\lambda & L \\\\ 0 & A' \\end{pmatrix}, \\quad A' \\in \\mathcal{M}_{n-1}(\\mathbb{K}).$$",
+        "Par déterminant triangulaire par blocs, $\\chi_A = (X - \\lambda)\\,\\chi_{A'}$. Le quotient d'un polynôme scindé par $X - \\lambda$ est scindé, donc $\\chi_{A'}$ est scindé. D'après $\\mathcal{P}(n-1)$, il existe $Q \\in \\mathrm{GL}_{n-1}(\\mathbb{K})$ et $T'$ triangulaire supérieure telles que $Q^{-1} A' Q = T'$.",
+        "Avec $R = \\begin{pmatrix} 1 & 0 \\\\ 0 & Q \\end{pmatrix}$, inversible, on calcule $R^{-1} \\begin{pmatrix} \\lambda & L \\\\ 0 & A' \\end{pmatrix} R = \\begin{pmatrix} \\lambda & LQ \\\\ 0 & T' \\end{pmatrix}$, triangulaire supérieure. Donc $\\mathcal{P}(n)$ est vraie.",
+        "**Trace et déterminant.** Deux matrices semblables ont même trace et même déterminant. Pour $T$ triangulaire, $\\operatorname{tr}(T) = \\sum t_i$ et $\\det(T) = \\prod t_i$, où les $t_i$ sont les racines de $\\chi_u$ comptées avec multiplicité."
+      ]
+    },
+    {
+      "id": "n-nilpotent",
+      "lesson": "l5",
+      "kind": "Théorème",
+      "title": "Endomorphismes nilpotents",
+      "status": "programme",
+      "level": "cpge",
+      "proof": "exigible",
+      "source": "prog-mp",
+      "statement": "$u$ est **nilpotent** s'il existe $p \\geq 1$ tel que $u^p = 0$ ; le plus petit tel $p$ est son **indice**. Sont équivalents :\n(i) $u$ est nilpotent ;\n(ii) $u$ est trigonalisable et sa seule valeur propre est $0$ ;\n(iii) $\\chi_u = X^n$.\nL'indice de nilpotence est au plus $n$ ; en particulier $u^n = 0$.",
+      "hypotheses": [
+        "Dans (ii), « trigonalisable » ne peut pas être omis lorsque $\\mathbb{K} = \\mathbb{R}$."
+      ],
+      "idea": "Si $u^p = 0$, alors $X^p$ est annulateur : il est scindé et sa seule racine est $0$. Réciproquement, Cayley-Hamilton donne $u^n = 0$.",
+      "counterexamples": [
+        "$\\begin{pmatrix}0&0&0\\\\0&0&-1\\\\0&1&0\\end{pmatrix}$ a pour seule valeur propre **réelle** $0$, mais son polynôme caractéristique est $X(X^2+1)$ : elle n'est pas nilpotente."
+      ],
+      "pitfalls": [
+        "Un endomorphisme nilpotent **et** diagonalisable est nul."
+      ],
+      "notations": [],
+      "examples": [
+        "$N = \\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ est nilpotente d'indice 2.",
+        "La dérivation $P \\mapsto P'$ sur $\\mathbb{K}_{n-1}[X]$, espace de dimension $n$, est nilpotente d'indice $n$."
+      ],
+      "prereqs": [
+        "n-trigonalisable",
+        "n-cayley-hamilton",
+        "n-vp-annulateur"
+      ],
+      "proofSteps": [
+        "On raisonne sur la matrice $A \\in \\mathcal{M}_n(\\mathbb{K})$ de $u$ dans une base. Comme $\\mathbb{K} \\subset \\mathbb{C}$, on peut voir $A$ dans $\\mathcal{M}_n(\\mathbb{C})$ ; son polynôme caractéristique est le même.",
+        "**(i) $\\Rightarrow$ (iii).** Supposons $A^p = 0$. Soit $\\lambda \\in \\mathbb{C}$ une valeur propre complexe de $A$ : $X^p$ annule $A$, donc $\\lambda^p = 0$, donc $\\lambda = 0$. Or $\\chi_A$ est scindé sur $\\mathbb{C}$ et ses racines sont les valeurs propres complexes de $A$ : étant unitaire de degré $n$, $\\chi_A = X^n$.",
+        "**(iii) $\\Rightarrow$ (ii).** $\\chi_u = X^n$ est scindé sur $\\mathbb{K}$, donc $u$ est trigonalisable ; ses valeurs propres sont les racines de $\\chi_u$, donc $0$ seulement.",
+        "**(ii) $\\Rightarrow$ (i).** $u$ a une matrice triangulaire $T$ dont les coefficients diagonaux sont ses valeurs propres, donc tous nuls. Ainsi $\\chi_u = X^n$, et le théorème de Cayley-Hamilton donne $u^n = 0$.",
+        "**Indice.** On vient de voir que $u$ nilpotent entraîne $u^n = 0$ : l'indice de nilpotence est au plus $n$.",
+        "**Nilpotent et diagonalisable.** Si $u$ est de plus diagonalisable, sa matrice dans une base de vecteurs propres est diagonale, de coefficients diagonaux tous égaux à la seule valeur propre $0$ : $u = 0$."
+      ]
+    },
+    {
+      "id": "n-dunford",
+      "lesson": "l5",
+      "kind": "Théorème",
+      "title": "Décomposition de Dunford",
+      "status": "hors-programme",
+      "level": "agreg",
+      "proof": "exigible",
+      "source": "jury-2024",
+      "statement": "Si $\\chi_u$ est scindé sur $\\mathbb{K}$, il existe un unique couple $(d, \\nu)$ d'endomorphismes de $E$, avec $d$ diagonalisable et $\\nu$ nilpotent, tel que\n$$u = d + \\nu \\quad \\text{et} \\quad d \\circ \\nu = \\nu \\circ d.$$\nDe plus, $d$ et $\\nu$ sont des polynômes en $u$.",
+      "hypotheses": [
+        "$\\chi_u$ est **scindé sur $\\mathbb{K}$**.",
+        "$d$ et $\\nu$ **commutent** : sans cette condition, il n'y a pas unicité."
+      ],
+      "idea": "Le lemme des noyaux appliqué à $\\chi_u = \\prod (X - \\lambda_i)^{m_i}$ décompose $E$ en sous-espaces caractéristiques $\\operatorname{Ker}(u - \\lambda_i \\mathrm{Id}_E)^{m_i}$. Les projecteurs $p_i$ associés sont des polynômes en $u$ ; on pose $d = \\sum \\lambda_i p_i$ et $\\nu = u - d$.",
+      "counterexamples": [
+        "$\\begin{pmatrix}1&1\\\\0&2\\end{pmatrix} = \\begin{pmatrix}1&0\\\\0&2\\end{pmatrix} + \\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ n'est **pas** la décomposition de Dunford : les deux termes ne commutent pas. La matrice est diagonalisable, donc $d$ est la matrice elle-même et $\\nu = 0$."
+      ],
+      "pitfalls": [
+        "Hors programme en MP, mais attendue à l'agrégation : le jury rappelle que les composantes sont des polynômes en $u$."
+      ],
+      "notations": [
+        "On trouve aussi « décomposition de Jordan-Chevalley »."
+      ],
+      "examples": [
+        "$\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix} = I_2 + \\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ : $I_2$ est diagonale, le second terme est nilpotent, et ils commutent. C'est la décomposition de Dunford."
+      ],
+      "prereqs": [
+        "n-lemme-noyaux",
+        "n-nilpotent",
+        "n-critere-annulateur"
+      ],
+      "proofSteps": null
+    }
+  ],
+  "lessons": [
+    {
+      "id": "l0",
+      "optional": true,
+      "title": "Prérequis",
+      "blurb": "Récurrence, sommes directes, rang, polynômes, déterminant."
+    },
+    {
+      "id": "l1",
+      "title": "Éléments propres",
+      "blurb": "Valeurs propres, vecteurs propres, sous-espaces propres."
+    },
+    {
+      "id": "l2",
+      "title": "Polynôme caractéristique",
+      "blurb": "Définition, multiplicités, Cayley-Hamilton."
+    },
+    {
+      "id": "l3",
+      "title": "Diagonalisation",
+      "blurb": "Les critères, et ce qui casse sans leurs hypothèses."
+    },
+    {
+      "id": "l4",
+      "title": "Polynômes annulateurs",
+      "blurb": "Polynôme minimal, lemme des noyaux, critère de diagonalisabilité."
+    },
+    {
+      "id": "l5",
+      "title": "Trigonalisation et nilpotence",
+      "blurb": "Polynôme scindé, nilpotents, Dunford."
+    }
+  ],
+  "questions": [
+    {
+      "id": "l0-q1",
+      "lesson": "l0",
+      "notion": "p-recurrence",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Pour démontrer que $\\mathcal{P}(n)$ est vraie pour tout $n \\in \\mathbb{N}$, il suffit de démontrer que $\\mathcal{P}(n) \\Rightarrow \\mathcal{P}(n+1)$ pour tout $n \\in \\mathbb{N}$.",
+      "answer": false,
+      "explain": "Il manque l'initialisation. Avec $\\mathcal{P}(n)$ : « $n = n+1$ », l'hérédité est vraie pour tout $n$ et la propriété est pourtant toujours fausse."
+    },
+    {
+      "id": "l0-q2",
+      "lesson": "l0",
+      "notion": "p-recurrence",
+      "type": "mcq",
+      "tag": "piege",
+      "prompt": "Un étudiant rédige : « Hérédité : supposons que $\\mathcal{P}(n)$ est vraie pour tout $n \\in \\mathbb{N}$, et montrons $\\mathcal{P}(n+1)$. » Quelle est l'erreur ?",
+      "options": [
+        "Il suppose ce qu'il faut démontrer ; il faut écrire « soit $n \\in \\mathbb{N}$ tel que $\\mathcal{P}(n)$ soit vraie »",
+        "Il aurait dû supposer $\\mathcal{P}(n+1)$ et montrer $\\mathcal{P}(n)$",
+        "Il n'y a pas d'erreur",
+        "L'hérédité doit se démontrer avant l'initialisation"
+      ],
+      "answer": 0,
+      "explain": "Dans l'hérédité, $n$ est un entier fixé quelconque pour lequel on suppose $\\mathcal{P}(n)$. Supposer $\\mathcal{P}(n)$ « pour tout $n$ », c'est supposer la conclusion."
+    },
+    {
+      "id": "l0-q3",
+      "lesson": "l0",
+      "notion": "p-sev",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Si trois sous-espaces $F_1, F_2, F_3$ de $E$ vérifient $F_i \\cap F_j = \\{0\\}$ pour $i \\neq j$, alors la somme $F_1 + F_2 + F_3$ est directe.",
+      "answer": false,
+      "explain": "Trois droites distinctes de $\\mathbb{R}^2$ ont des intersections deux à deux nulles, mais leur somme, de dimension 2, ne peut pas être directe (il faudrait une dimension 3)."
+    },
+    {
+      "id": "l0-q4",
+      "lesson": "l0",
+      "notion": "p-sev",
+      "type": "multi",
+      "tag": "hypotheses",
+      "prompt": "Soient $F$ et $G$ deux sous-espaces de $E$, de dimension finie. Cochez toutes les conditions **équivalentes** à « la somme $F + G$ est directe ».",
+      "options": [
+        "$F \\cap G = \\{0\\}$",
+        "Tout vecteur de $F + G$ s'écrit de manière unique $x + y$ avec $x \\in F$ et $y \\in G$",
+        "$\\dim(F + G) = \\dim F + \\dim G$",
+        "$F \\cup G = E$"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Les trois premières conditions sont équivalentes (formule de Grassmann pour la troisième). La réunion $F \\cup G$ n'est en général même pas un sous-espace vectoriel."
+    },
+    {
+      "id": "l0-q5",
+      "lesson": "l0",
+      "notion": "p-rang",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soit $u$ un endomorphisme de $\\mathbb{R}^5$ de rang $3$. Quelle est la dimension de $\\operatorname{Ker} u$ ?",
+      "options": [
+        "$2$",
+        "$3$",
+        "$5$",
+        "$8$"
+      ],
+      "answer": 0,
+      "explain": "Théorème du rang : $\\dim \\operatorname{Ker} u = 5 - 3 = 2$."
+    },
+    {
+      "id": "l0-q6",
+      "lesson": "l0",
+      "notion": "p-rang",
+      "type": "tf",
+      "tag": "cadre",
+      "prompt": "Tout endomorphisme injectif d'un espace vectoriel est bijectif.",
+      "answer": false,
+      "explain": "C'est vrai en dimension finie, par le théorème du rang. En dimension infinie, $P \\mapsto XP$ sur $\\mathbb{K}[X]$ est injectif mais pas surjectif : aucun polynôme constant non nul n'est dans son image."
+    },
+    {
+      "id": "l0-q7",
+      "lesson": "l0",
+      "notion": "p-polynomes",
+      "type": "multi",
+      "tag": "cadre",
+      "prompt": "Cochez les polynômes scindés **sur $\\mathbb{R}$**.",
+      "options": [
+        "$X^2 - 1$",
+        "$(X-1)^2 (X+2)$",
+        "$X^2 + 1$",
+        "$X^3 - 1$"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "$X^2 - 1 = (X-1)(X+1)$. En revanche $X^2 + 1$ n'a pas de racine réelle, et $X^3 - 1 = (X-1)(X^2 + X + 1)$ où $X^2 + X + 1$ a un discriminant strictement négatif."
+    },
+    {
+      "id": "l0-q8",
+      "lesson": "l0",
+      "notion": "p-polynomes",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Quelle est la multiplicité de la racine $1$ dans $P = (X-1)^2 (X+1)(X^2 - 1)$ ?",
+      "options": [
+        "$3$",
+        "$2$",
+        "$1$",
+        "$4$"
+      ],
+      "answer": 0,
+      "explain": "$X^2 - 1 = (X-1)(X+1)$, donc $P = (X-1)^3 (X+1)^2$."
+    },
+    {
+      "id": "l0-q9",
+      "lesson": "l0",
+      "notion": "p-determinant",
+      "type": "mcq",
+      "tag": "piege",
+      "prompt": "Soit $A \\in \\mathcal{M}_3(\\mathbb{K})$. Que vaut $\\det(2A)$ ?",
+      "options": [
+        "$8 \\det(A)$",
+        "$2 \\det(A)$",
+        "$6 \\det(A)$",
+        "$\\det(A) + 2$"
+      ],
+      "answer": 0,
+      "explain": "$\\det(\\lambda A) = \\lambda^n \\det(A)$ : chacune des $n = 3$ colonnes est multipliée par $2$."
+    },
+    {
+      "id": "l0-q10",
+      "lesson": "l0",
+      "notion": "p-determinant",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Pour toutes matrices $A, B \\in \\mathcal{M}_n(\\mathbb{K})$, $\\det(A + B) = \\det(A) + \\det(B)$.",
+      "answer": false,
+      "explain": "Le déterminant est multiplicatif, pas additif : $\\det(I_2 + I_2) = 4 \\neq 2$."
+    },
+    {
+      "id": "l1-q1",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "type": "multi",
+      "tag": "hypotheses",
+      "prompt": "Cochez toutes les conditions qui figurent dans la définition de « $x$ est un vecteur propre de $u$ ».",
+      "options": [
+        "$x \\neq 0$",
+        "Il existe $\\lambda \\in \\mathbb{K}$ tel que $u(x) = \\lambda x$",
+        "Le scalaire $\\lambda$ est non nul",
+        "$u$ est injectif"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Un vecteur propre est un vecteur **non nul** colinéaire à son image. La valeur propre peut être nulle, et $u$ n'a pas à être injectif."
+    },
+    {
+      "id": "l1-q2",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Le sous-espace propre $E_\\lambda(u)$ est l'ensemble des vecteurs propres de $u$ associés à $\\lambda$.",
+      "answer": false,
+      "explain": "$E_\\lambda(u) = \\operatorname{Ker}(u - \\lambda\\,\\mathrm{Id}_E)$ contient aussi le vecteur nul, qui n'est jamais vecteur propre. L'ensemble des vecteurs propres n'est d'ailleurs pas un sous-espace vectoriel."
+    },
+    {
+      "id": "l1-q3",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "type": "tf",
+      "tag": "application",
+      "prompt": "Si $0$ est valeur propre de $u$, alors $u$ n'est pas injectif.",
+      "answer": true,
+      "explain": "$0$ valeur propre signifie qu'il existe $x \\neq 0$ avec $u(x) = 0$, c'est-à-dire $\\operatorname{Ker} u \\neq \\{0\\}$."
+    },
+    {
+      "id": "l1-q4",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "type": "mcq",
+      "tag": "cadre",
+      "prompt": "Soit $A = \\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$. Que vaut $\\operatorname{Sp}_{\\mathbb{R}}(A)$ ?",
+      "options": [
+        "$\\varnothing$",
+        "$\\{i, -i\\}$",
+        "$\\{0\\}$",
+        "$\\{1, -1\\}$"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_A = X^2 + 1$ n'a pas de racine réelle : le spectre réel est vide. Le spectre complexe est $\\{i, -i\\}$. Le spectre dépend du corps."
+    },
+    {
+      "id": "l1-q5",
+      "lesson": "l1",
+      "notion": "n-somme-directe",
+      "type": "order",
+      "tag": "demo",
+      "prompt": "Remettez dans l'ordre la démonstration, par récurrence sur $p$, du fait que des sous-espaces propres associés à des valeurs propres distinctes $\\lambda_1, \\dots, \\lambda_p$ sont en somme directe.",
+      "steps": [
+        "On démontre par récurrence sur $p \\geq 1$ la propriété $\\mathcal{P}(p)$ : « si $x_1 + \\dots + x_p = 0$ avec $x_i \\in E_{\\lambda_i}(u)$, les $\\lambda_i$ étant deux à deux distincts, alors tous les $x_i$ sont nuls ». Pour $p = 1$, c'est immédiat.",
+        "Soit $p \\geq 2$ tel que $\\mathcal{P}(p-1)$ soit vraie, et soit une relation $x_1 + \\dots + x_p = 0$ comme ci-dessus, notée $(1)$.",
+        "En appliquant $u$ à $(1)$, on obtient $\\lambda_1 x_1 + \\dots + \\lambda_p x_p = 0$, notée $(2)$.",
+        "La combinaison $(2) - \\lambda_p \\cdot (1)$ élimine $x_p$ : $\\sum_{i < p} (\\lambda_i - \\lambda_p)\\, x_i = 0$.",
+        "Chaque $(\\lambda_i - \\lambda_p)\\, x_i$ appartient à $E_{\\lambda_i}(u)$ : d'après $\\mathcal{P}(p-1)$, ces vecteurs sont nuls, donc $x_i = 0$ pour $i < p$ puisque $\\lambda_i \\neq \\lambda_p$.",
+        "En reportant dans $(1)$, il vient enfin $x_p = 0$ : $\\mathcal{P}(p)$ est vraie."
+      ],
+      "explain": "L'idée clé est d'éliminer $x_p$ en combinant la relation et son image par $u$. L'hypothèse « valeurs propres distinctes » sert à simplifier par $\\lambda_i - \\lambda_p \\neq 0$. Ne pas oublier d'énoncer la propriété et de traiter l'initialisation."
+    },
+    {
+      "id": "l1-q6",
+      "lesson": "l1",
+      "notion": "n-somme-directe",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Si $\\lambda_1, \\dots, \\lambda_p$ sont toutes les valeurs propres de $u$, alors $E = E_{\\lambda_1}(u) \\oplus \\dots \\oplus E_{\\lambda_p}(u)$.",
+      "answer": false,
+      "explain": "La somme est toujours directe, mais elle n'est égale à $E$ que si $u$ est diagonalisable. Pour $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$, la seule valeur propre est $1$ et $E_1$ est une droite, pas le plan entier."
+    },
+    {
+      "id": "l1-q7",
+      "lesson": "l1",
+      "notion": "n-commutation",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "On suppose que $u \\circ v = v \\circ u$. Quelle affirmation est toujours vraie ?",
+      "options": [
+        "Tout sous-espace propre de $u$ est stable par $v$",
+        "$u$ et $v$ ont les mêmes valeurs propres",
+        "Tout vecteur propre de $u$ est vecteur propre de $v$",
+        "$u \\circ v$ est diagonalisable"
+      ],
+      "answer": 0,
+      "explain": "Si $u(x) = \\lambda x$, alors $u(v(x)) = v(u(x)) = \\lambda v(x)$. Les autres affirmations sont fausses : prendre $u = \\mathrm{Id}_E$, qui commute avec tout $v$."
+    },
+    {
+      "id": "l1-q8",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "type": "mcq",
+      "tag": "notation",
+      "prompt": "Laquelle de ces écritures ne désigne **pas** le sous-espace propre de $u$ associé à $\\lambda$ ?",
+      "options": [
+        "$\\operatorname{Im}(u - \\lambda\\,\\mathrm{Id}_E)$",
+        "$\\operatorname{Ker}(u - \\lambda\\,\\mathrm{Id}_E)$",
+        "$\\operatorname{Ker}(\\lambda\\,\\mathrm{Id}_E - u)$",
+        "$\\{x \\in E \\mid u(x) = \\lambda x\\}$"
+      ],
+      "answer": 0,
+      "explain": "Le sous-espace propre est un **noyau**. Changer le signe ne change pas le noyau, donc $\\operatorname{Ker}(u - \\lambda\\,\\mathrm{Id}_E) = \\operatorname{Ker}(\\lambda\\,\\mathrm{Id}_E - u)$."
+    },
+    {
+      "id": "l1-q9",
+      "lesson": "l1",
+      "notion": "n-somme-directe",
+      "type": "card",
+      "tag": "restitution",
+      "prompt": "Énoncez le théorème sur la somme des sous-espaces propres, avec son hypothèse, puis ses deux corollaires.",
+      "back": "**Théorème.** Si $\\lambda_1, \\dots, \\lambda_p$ sont des valeurs propres de $u$ deux à deux distinctes, la somme $E_{\\lambda_1}(u) + \\dots + E_{\\lambda_p}(u)$ est directe.\n**Corollaire 1.** Une famille de vecteurs propres associés à des valeurs propres deux à deux distinctes est libre.\n**Corollaire 2.** En dimension $n$, $u$ a au plus $n$ valeurs propres.",
+      "explain": "Vérifiez que vous avez bien dit « deux à deux distinctes » et « directe » (et non « égale à $E$ »)."
+    },
+    {
+      "id": "l2-q1",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "type": "mcq",
+      "tag": "notation",
+      "prompt": "Avec la convention $\\chi_A = \\det(X I_n - A)$, que vaut $\\det(A - X I_n)$ pour $A \\in \\mathcal{M}_n(\\mathbb{K})$ ?",
+      "options": [
+        "$(-1)^n \\chi_A$",
+        "$\\chi_A$",
+        "$-\\chi_A$",
+        "$\\chi_{-A}$"
+      ],
+      "answer": 0,
+      "explain": "$A - X I_n = -(X I_n - A)$ et $\\det(-M) = (-1)^n \\det(M)$. Les deux conventions coïncident quand $n$ est pair et diffèrent d'un signe quand $n$ est impair."
+    },
+    {
+      "id": "l2-q2",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "type": "mcq",
+      "tag": "restitution",
+      "prompt": "Quel est le coefficient de $X^{n-1}$ dans $\\chi_A = \\det(X I_n - A)$ ?",
+      "options": [
+        "$-\\operatorname{tr}(A)$",
+        "$\\operatorname{tr}(A)$",
+        "$(-1)^n \\operatorname{tr}(A)$",
+        "$\\det(A)$"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_A = X^n - \\operatorname{tr}(A)\\,X^{n-1} + \\dots + (-1)^n \\det(A)$. On le vérifie pour $n = 2$ : $X^2 - \\operatorname{tr}(A) X + \\det(A)$."
+    },
+    {
+      "id": "l2-q3",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "type": "mcq",
+      "tag": "piege",
+      "prompt": "Quel est le terme constant de $\\chi_A = \\det(X I_n - A)$ ?",
+      "options": [
+        "$(-1)^n \\det(A)$",
+        "$\\det(A)$",
+        "$-\\det(A)$",
+        "$\\operatorname{tr}(A)$"
+      ],
+      "answer": 0,
+      "explain": "Le terme constant est $\\chi_A(0) = \\det(-A) = (-1)^n \\det(A)$. L'oubli du signe est une erreur fréquente en dimension impaire."
+    },
+    {
+      "id": "l2-q4",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Deux matrices de $\\mathcal{M}_n(\\mathbb{K})$ qui ont le même polynôme caractéristique sont semblables.",
+      "answer": false,
+      "explain": "$I_2$ et $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ ont toutes deux $(X-1)^2$ pour polynôme caractéristique, mais la seule matrice semblable à $I_2$ est $I_2$. Seul le sens direct est vrai : semblables implique même polynôme caractéristique."
+    },
+    {
+      "id": "l2-q5",
+      "lesson": "l2",
+      "notion": "n-multiplicites",
+      "type": "multi",
+      "tag": "hypotheses",
+      "prompt": "Soit $\\lambda$ une valeur propre de $u$, de multiplicité $m(\\lambda)$ dans $\\chi_u$. Cochez les affirmations toujours vraies.",
+      "options": [
+        "$\\dim E_\\lambda(u) \\geq 1$",
+        "$\\dim E_\\lambda(u) \\leq m(\\lambda)$",
+        "$\\dim E_\\lambda(u) = m(\\lambda)$",
+        "$\\dim E_\\lambda(u) \\geq m(\\lambda)$"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "On a toujours $1 \\leq \\dim E_\\lambda(u) \\leq m(\\lambda)$. L'égalité pour toutes les valeurs propres, jointe au caractère scindé de $\\chi_u$, équivaut à la diagonalisabilité."
+    },
+    {
+      "id": "l2-q6",
+      "lesson": "l2",
+      "notion": "n-cayley-hamilton",
+      "type": "mcq",
+      "tag": "piege",
+      "prompt": "Un étudiant écrit : « $\\chi_A(A) = \\det(A \\cdot I_n - A) = \\det(0) = 0$, ce qui prouve le théorème de Cayley-Hamilton. » Où est l'erreur ?",
+      "options": [
+        "On ne peut pas substituer la matrice $A$ à $X$ à l'intérieur du déterminant ; d'ailleurs $\\chi_A(A)$ est une matrice, pas un scalaire",
+        "$\\det(0)$ ne vaut pas $0$",
+        "La conclusion est fausse : $\\chi_A(A) \\neq 0$ en général",
+        "Il n'y a pas d'erreur, la preuve est correcte"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_A(A)$ s'obtient en développant d'abord le déterminant en un polynôme, puis en évaluant ce polynôme en $A$ : le résultat est une matrice de $\\mathcal{M}_n(\\mathbb{K})$. Le théorème est vrai, mais cet argument ne le prouve pas."
+    },
+    {
+      "id": "l2-q7",
+      "lesson": "l2",
+      "notion": "n-multiplicites",
+      "type": "tf",
+      "tag": "cadre",
+      "prompt": "Toute matrice de $\\mathcal{M}_3(\\mathbb{R})$ possède au moins une valeur propre réelle.",
+      "answer": true,
+      "explain": "$\\chi_A$ est un polynôme réel de degré 3, donc de degré impair : ses limites en $\\pm\\infty$ sont de signes opposés et il est continu, donc il admet une racine réelle (théorème des valeurs intermédiaires). C'est faux en dimension paire, comme le montre $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$."
+    },
+    {
+      "id": "l2-q8",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soit $A \\in \\mathcal{M}_2(\\mathbb{R})$ avec $\\operatorname{tr}(A) = 5$ et $\\det(A) = 6$. Quel est le spectre de $A$ ?",
+      "options": [
+        "$\\{2, 3\\}$",
+        "$\\{1, 6\\}$",
+        "$\\{-2, -3\\}$",
+        "$\\{5, 6\\}$"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_A = X^2 - 5X + 6 = (X - 2)(X - 3)$."
+    },
+    {
+      "id": "l2-q9",
+      "lesson": "l2",
+      "notion": "n-cayley-hamilton",
+      "type": "card",
+      "tag": "restitution",
+      "prompt": "Énoncez le théorème de Cayley-Hamilton. Sa démonstration est-elle exigible en MP ? Quelle conséquence a-t-il pour le polynôme minimal ?",
+      "back": "**Énoncé.** En dimension finie, $\\chi_u(u) = 0$ (et $\\chi_A(A) = 0$).\n**Statut.** La démonstration n'est pas exigible en MP.\n**Conséquence.** $\\pi_u$ divise $\\chi_u$, donc $\\deg \\pi_u \\leq n$.",
+      "explain": "À l'agrégation, en revanche, il faut savoir le démontrer."
+    },
+    {
+      "id": "l3-q1",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "type": "multi",
+      "tag": "hypotheses",
+      "prompt": "Soit $u \\in \\mathcal{L}(E)$ avec $\\dim E = n$. Cochez toutes les conditions **équivalentes** à « $u$ est diagonalisable ».",
+      "options": [
+        "$E$ est la somme directe des sous-espaces propres de $u$",
+        "La somme des dimensions des sous-espaces propres vaut $n$",
+        "$\\chi_u$ est scindé sur $\\mathbb{K}$ et $\\dim E_\\lambda(u) = m(\\lambda)$ pour toute valeur propre $\\lambda$",
+        "$\\chi_u$ est scindé sur $\\mathbb{K}$",
+        "$u$ possède $n$ valeurs propres deux à deux distinctes"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "« $\\chi_u$ scindé » seul caractérise la trigonalisabilité. Avoir $n$ valeurs propres distinctes est suffisant mais pas nécessaire (penser à $\\mathrm{Id}_E$)."
+    },
+    {
+      "id": "l3-q2",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Soit $A \\in \\mathcal{M}_n(\\mathbb{R})$. Si $\\dim E_\\lambda(A) = m(\\lambda)$ pour toute valeur propre réelle $\\lambda$ de $A$, alors $A$ est diagonalisable sur $\\mathbb{R}$.",
+      "answer": false,
+      "explain": "Il manque l'hypothèse « $\\chi_A$ scindé sur $\\mathbb{R}$ ». La matrice $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ n'a aucune valeur propre réelle : la condition est vide, donc vraie, et pourtant la matrice n'est pas diagonalisable sur $\\mathbb{R}$."
+    },
+    {
+      "id": "l3-q3",
+      "lesson": "l3",
+      "notion": "n-vp-distinctes",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Si $u$ est diagonalisable, alors $u$ possède $n$ valeurs propres deux à deux distinctes.",
+      "answer": false,
+      "explain": "C'est la réciproque d'une condition suffisante, et elle est fausse : $\\mathrm{Id}_E$ est diagonalisable avec une seule valeur propre."
+    },
+    {
+      "id": "l3-q4",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "La matrice $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ est-elle diagonalisable sur $\\mathbb{C}$ ?",
+      "options": [
+        "Non : sa seule valeur propre est $1$, donc si elle était diagonalisable elle serait semblable à $I_2$, donc égale à $I_2$",
+        "Oui, car son polynôme caractéristique est scindé sur $\\mathbb{C}$",
+        "Oui, car elle est triangulaire",
+        "Non, car elle n'est pas inversible"
+      ],
+      "answer": 0,
+      "explain": "Argument à retenir : une matrice diagonalisable ayant une seule valeur propre $\\lambda$ est égale à $\\lambda I_n$. Ici $\\dim E_1 = 1 < 2 = m(1)$. La matrice est par ailleurs inversible."
+    },
+    {
+      "id": "l3-q5",
+      "lesson": "l3",
+      "notion": "n-vp-distinctes",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Quel est l'argument le plus rapide pour justifier que $A = \\begin{pmatrix}2&0&0\\\\0&3&1\\\\0&0&5\\end{pmatrix}$ est diagonalisable ?",
+      "options": [
+        "Elle est triangulaire à coefficients diagonaux distincts : elle a trois valeurs propres distinctes en dimension 3",
+        "Elle est triangulaire, et toute matrice triangulaire est diagonalisable",
+        "Elle est symétrique réelle",
+        "Elle est inversible"
+      ],
+      "answer": 0,
+      "explain": "Les valeurs propres d'une matrice triangulaire sont ses coefficients diagonaux : ici $2$, $3$ et $5$. Attention, une matrice triangulaire n'est pas toujours diagonalisable, et $A$ n'est pas symétrique."
+    },
+    {
+      "id": "l3-q6",
+      "lesson": "l3",
+      "notion": "n-exemples-diag",
+      "type": "tf",
+      "tag": "cadre",
+      "prompt": "Toute matrice symétrique à coefficients complexes est diagonalisable.",
+      "answer": false,
+      "explain": "Le théorème spectral concerne les matrices symétriques **réelles**. La matrice $\\begin{pmatrix}1&i\\\\i&-1\\end{pmatrix}$ est symétrique, non nulle et de carré nul : elle est nilpotente, donc non diagonalisable."
+    },
+    {
+      "id": "l3-q7",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soit $A = \\begin{pmatrix}3&1&0\\\\0&3&0\\\\0&0&3\\end{pmatrix}$. Quelle est la dimension du sous-espace propre $E_3(A)$ ?",
+      "options": [
+        "$2$",
+        "$1$",
+        "$3$",
+        "$0$"
+      ],
+      "answer": 0,
+      "explain": "$A - 3I_3$ a un seul coefficient non nul : elle est de rang 1, donc son noyau est de dimension 2. Comme $m(3) = 3$, la matrice n'est pas diagonalisable."
+    },
+    {
+      "id": "l3-q8",
+      "lesson": "l3",
+      "notion": "n-exemples-diag",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soit $p$ un projecteur de $E$, c'est-à-dire $p \\circ p = p$. Que peut-on affirmer ?",
+      "options": [
+        "$p$ est diagonalisable et $\\operatorname{Sp}(p) \\subset \\{0, 1\\}$",
+        "$p$ est diagonalisable seulement s'il est de rang 1",
+        "$p$ n'est pas diagonalisable en général",
+        "$p$ est diagonalisable et $\\operatorname{Sp}(p) = \\{0, 1\\}$ dans tous les cas"
+      ],
+      "answer": 0,
+      "explain": "$E = \\operatorname{Ker}(p) \\oplus \\operatorname{Ker}(p - \\mathrm{Id}_E)$. L'inclusion du spectre peut être stricte : pour $p = \\mathrm{Id}_E$ le spectre est $\\{1\\}$, pour $p = 0$ c'est $\\{0\\}$."
+    },
+    {
+      "id": "l3-q9",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "type": "card",
+      "tag": "restitution",
+      "prompt": "Donnez la définition d'un endomorphisme diagonalisable et trois caractérisations équivalentes.",
+      "back": "**Définition.** Il existe une base de $E$ formée de vecteurs propres de $u$.\n**Caractérisations.**\n(1) $E = \\bigoplus_{\\lambda} E_\\lambda(u)$.\n(2) $\\sum_{\\lambda} \\dim E_\\lambda(u) = n$.\n(3) $\\chi_u$ est scindé sur $\\mathbb{K}$ et $\\dim E_\\lambda(u) = m(\\lambda)$ pour toute valeur propre.\n(4) $u$ admet un polynôme annulateur scindé à racines simples (leçon suivante).",
+      "explain": "Point de vigilance : dans (3), n'oubliez pas « scindé sur $\\mathbb{K}$ »."
+    },
+    {
+      "id": "l4-q1",
+      "lesson": "l4",
+      "notion": "n-lemme-noyaux",
+      "type": "multi",
+      "tag": "hypotheses",
+      "prompt": "Le lemme des noyaux affirme que $\\operatorname{Ker}(P_1 P_2)(u) = \\operatorname{Ker} P_1(u) \\oplus \\operatorname{Ker} P_2(u)$. Cochez les hypothèses dont l'énoncé a besoin.",
+      "options": [
+        "$P_1$ et $P_2$ sont premiers entre eux",
+        "$P_1 P_2$ est un polynôme annulateur de $u$",
+        "$P_1$ et $P_2$ sont scindés",
+        "$E$ est de dimension finie"
+      ],
+      "answers": [
+        0
+      ],
+      "explain": "Une seule hypothèse : $P_1$ et $P_2$ premiers entre eux. Le lemme vaut en toute dimension et pour des polynômes quelconques. Quand de plus $P_1 P_2$ annule $u$, il donne une décomposition de $E$ tout entier."
+    },
+    {
+      "id": "l4-q2",
+      "lesson": "l4",
+      "notion": "n-lemme-noyaux",
+      "type": "order",
+      "tag": "demo",
+      "prompt": "Remettez dans l'ordre la démonstration du lemme des noyaux pour deux polynômes $P_1$ et $P_2$ premiers entre eux.",
+      "steps": [
+        "On commence par le théorème de Bézout : il existe $A, B \\in \\mathbb{K}[X]$ tels que $A P_1 + B P_2 = 1$.",
+        "En évaluant cette relation en $u$, on obtient $\\mathrm{Id}_E = A(u) \\circ P_1(u) + B(u) \\circ P_2(u)$, notée $(\\ast)$.",
+        "Somme directe d'abord : si $x \\in \\operatorname{Ker} P_1(u) \\cap \\operatorname{Ker} P_2(u)$, alors $(\\ast)$ appliquée à $x$ donne $x = 0$.",
+        "Inclusion $\\supset$ ensuite : si $x \\in \\operatorname{Ker} P_1(u)$, alors $(P_1 P_2)(u)(x) = P_2(u)\\big(P_1(u)(x)\\big) = 0$ ; de même pour $\\operatorname{Ker} P_2(u)$.",
+        "Inclusion $\\subset$ enfin : soit $x \\in \\operatorname{Ker}(P_1 P_2)(u)$. On pose $y = (B P_2)(u)(x)$ et $z = (A P_1)(u)(x)$ ; d'après $(\\ast)$, $x = y + z$.",
+        "Il reste à vérifier que $P_1(u)(y) = B(u)\\big((P_1 P_2)(u)(x)\\big) = 0$ et de même $P_2(u)(z) = 0$ : ainsi $y \\in \\operatorname{Ker} P_1(u)$ et $z \\in \\operatorname{Ker} P_2(u)$."
+      ],
+      "explain": "Tout repose sur la relation de Bézout évaluée en $u$. Elle montre aussi que les projections $x \\mapsto y$ et $x \\mapsto z$ sont des polynômes en $u$. On utilise partout que deux polynômes en $u$ commutent."
+    },
+    {
+      "id": "l4-q3",
+      "lesson": "l4",
+      "notion": "n-vp-annulateur",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Si $P$ est un polynôme annulateur de $u$, alors toute racine de $P$ est valeur propre de $u$.",
+      "answer": false,
+      "explain": "$X(X - 1)$ annule $\\mathrm{Id}_E$, mais $0$ n'est pas valeur propre de $\\mathrm{Id}_E$. C'est le sens inverse qui est vrai. Seul le polynôme **minimal** a pour racines exactement les valeurs propres."
+    },
+    {
+      "id": "l4-q4",
+      "lesson": "l4",
+      "notion": "n-vp-annulateur",
+      "type": "tf",
+      "tag": "restitution",
+      "prompt": "Si $P$ est un polynôme annulateur de $u$, alors toute valeur propre de $u$ est racine de $P$.",
+      "answer": true,
+      "explain": "Si $u(x) = \\lambda x$ avec $x \\neq 0$, alors $0 = P(u)(x) = P(\\lambda)\\,x$, donc $P(\\lambda) = 0$."
+    },
+    {
+      "id": "l4-q5",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soit $A \\in \\mathcal{M}_n(\\mathbb{R})$ telle que $A^3 = A$. Que peut-on affirmer ?",
+      "options": [
+        "$A$ est diagonalisable sur $\\mathbb{R}$ et $\\operatorname{Sp}(A) \\subset \\{-1, 0, 1\\}$",
+        "$A$ est un projecteur",
+        "$A$ est inversible",
+        "$A$ est diagonalisable sur $\\mathbb{C}$, mais pas nécessairement sur $\\mathbb{R}$"
+      ],
+      "answer": 0,
+      "explain": "$X^3 - X = X(X-1)(X+1)$ est annulateur, scindé sur $\\mathbb{R}$ et à racines simples. Les valeurs propres sont parmi ses racines. $A = 0$ montre que $A$ n'est pas forcément inversible, et $A = -I_n$ qu'elle n'est pas forcément un projecteur."
+    },
+    {
+      "id": "l4-q6",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "type": "mcq",
+      "tag": "cadre",
+      "prompt": "Soit $A \\in \\mathcal{M}_n(\\mathbb{R})$ telle que $A^2 = -I_n$. Que peut-on affirmer ?",
+      "options": [
+        "$A$ n'est pas diagonalisable sur $\\mathbb{R}$, mais elle l'est sur $\\mathbb{C}$",
+        "$A$ est diagonalisable sur $\\mathbb{R}$, car $X^2 + 1$ est à racines simples",
+        "$A$ n'est diagonalisable ni sur $\\mathbb{R}$ ni sur $\\mathbb{C}$",
+        "$A$ est nilpotente"
+      ],
+      "answer": 0,
+      "explain": "$X^2 + 1 = (X - i)(X + i)$ est scindé à racines simples sur $\\mathbb{C}$ : $A$ est diagonalisable sur $\\mathbb{C}$. Sur $\\mathbb{R}$, toute valeur propre serait racine réelle de $X^2 + 1$ : il n'y en a aucune, donc $A$ n'est pas diagonalisable sur $\\mathbb{R}$."
+    },
+    {
+      "id": "l4-q7",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Si $u$ admet un polynôme annulateur scindé sur $\\mathbb{K}$, alors $u$ est diagonalisable.",
+      "answer": false,
+      "explain": "Il manque « à racines simples ». Un endomorphisme nilpotent non nul est annulé par $X^p$, qui est scindé, sans être diagonalisable. Un annulateur scindé donne seulement la trigonalisabilité."
+    },
+    {
+      "id": "l4-q8",
+      "lesson": "l4",
+      "notion": "n-poly-minimal",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Quel est le polynôme minimal de $A = \\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ ?",
+      "options": [
+        "$(X - 1)^2$",
+        "$X - 1$",
+        "$X^2 - 1$",
+        "$X(X - 1)$"
+      ],
+      "answer": 0,
+      "explain": "$\\pi_A$ divise $\\chi_A = (X-1)^2$ et a pour racine $1$. Ce n'est pas $X - 1$ puisque $A \\neq I_2$. Donc $\\pi_A = (X-1)^2$, ce qui confirme que $A$ n'est pas diagonalisable."
+    },
+    {
+      "id": "l4-q9",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soient $u$ diagonalisable et $F$ un sous-espace stable par $u$. Que dire de l'endomorphisme induit $u_F$ ?",
+      "options": [
+        "Il est diagonalisable, car $\\pi_u$, scindé à racines simples, annule aussi $u_F$",
+        "Il n'est pas forcément diagonalisable",
+        "Il est diagonalisable seulement si $F$ est un sous-espace propre de $u$",
+        "Il est diagonalisable seulement si $F$ admet un supplémentaire stable"
+      ],
+      "answer": 0,
+      "explain": "Tout polynôme annulateur de $u$ annule $u_F$. Le jury de l'agrégation attend cette justification dans la leçon sur les endomorphismes diagonalisables."
+    },
+    {
+      "id": "l4-q10",
+      "lesson": "l4",
+      "notion": "n-poly-minimal",
+      "type": "tf",
+      "tag": "cadre",
+      "prompt": "Tout endomorphisme d'un $\\mathbb{K}$-espace vectoriel, de dimension finie ou non, admet un polynôme annulateur non nul.",
+      "answer": false,
+      "explain": "En dimension infinie, c'est faux. Pour la dérivation $D$ sur $\\mathbb{K}[X]$ : si $P = \\sum a_k X^k \\neq 0$ et si $m$ est le plus petit indice tel que $a_m \\neq 0$, alors $P(D)(X^m) = m!\\,a_m \\neq 0$."
+    },
+    {
+      "id": "l4-q11",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "type": "card",
+      "tag": "restitution",
+      "prompt": "Énoncez le critère de diagonalisabilité par les polynômes annulateurs, puis donnez un contre-exemple pour chacune des deux hypothèses.",
+      "back": "**Critère.** $u$ est diagonalisable si et seulement s'il admet un polynôme annulateur scindé sur $\\mathbb{K}$ à racines simples, si et seulement si $\\pi_u$ est scindé sur $\\mathbb{K}$ à racines simples.\n**Sans « racines simples ».** Un nilpotent d'indice 2 est annulé par $X^2$ et n'est pas diagonalisable.\n**Sans « scindé sur $\\mathbb{K}$ ».** $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ est annulée par $X^2 + 1$ et n'est pas diagonalisable sur $\\mathbb{R}$.",
+      "explain": "Un seul polynôme annulateur scindé à racines simples suffit : inutile de calculer $\\pi_u$."
+    },
+    {
+      "id": "l5-q1",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "type": "mcq",
+      "tag": "hypotheses",
+      "prompt": "$u$ est trigonalisable si et seulement si…",
+      "options": [
+        "$\\chi_u$ est scindé sur $\\mathbb{K}$",
+        "$\\chi_u$ est scindé sur $\\mathbb{K}$ à racines simples",
+        "$u$ est inversible",
+        "$\\pi_u$ est à racines simples"
+      ],
+      "answer": 0,
+      "explain": "« Scindé » caractérise la trigonalisabilité. « Scindé à racines simples » pour $\\chi_u$ est une condition suffisante de diagonalisabilité."
+    },
+    {
+      "id": "l5-q2",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "type": "tf",
+      "tag": "cadre",
+      "prompt": "Toute matrice de $\\mathcal{M}_n(\\mathbb{C})$ est trigonalisable.",
+      "answer": true,
+      "explain": "D'après le théorème de d'Alembert-Gauss, tout polynôme non constant est scindé sur $\\mathbb{C}$ ; c'est donc le cas de $\\chi_A$."
+    },
+    {
+      "id": "l5-q3",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "type": "tf",
+      "tag": "piege",
+      "prompt": "Pour $A \\in \\mathcal{M}_n(\\mathbb{R})$, la trace de $A$ est la somme de ses valeurs propres réelles, comptées avec multiplicité.",
+      "answer": false,
+      "explain": "C'est vrai seulement si $\\chi_A$ est scindé sur $\\mathbb{R}$. En général, il faut prendre les valeurs propres **complexes**. La matrice $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$ a pour trace $0 = i + (-i)$ et aucune valeur propre réelle ; plus parlant, une rotation d'angle $\\theta \\notin \\pi\\mathbb{Z}$ a pour trace $2\\cos\\theta$ sans valeur propre réelle."
+    },
+    {
+      "id": "l5-q4",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Soit $A \\in \\mathcal{M}_3(\\mathbb{C})$ de polynôme caractéristique $(X-1)^2 (X-2)$. Que valent $\\det(A)$ et $\\operatorname{tr}(A)$ ?",
+      "options": [
+        "$\\det(A) = 2$ et $\\operatorname{tr}(A) = 4$",
+        "$\\det(A) = 2$ et $\\operatorname{tr}(A) = 3$",
+        "$\\det(A) = 3$ et $\\operatorname{tr}(A) = 4$",
+        "Cela dépend de la diagonalisabilité de $A$"
+      ],
+      "answer": 0,
+      "explain": "Les valeurs propres comptées avec multiplicité sont $1, 1, 2$ : produit $2$, somme $4$. Le résultat ne dépend pas de la diagonalisabilité, seulement de $\\chi_A$."
+    },
+    {
+      "id": "l5-q5",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "type": "multi",
+      "tag": "hypotheses",
+      "prompt": "Soit $u \\in \\mathcal{L}(E)$ avec $\\dim E = n$ et $\\mathbb{K} = \\mathbb{R}$. Cochez toutes les conditions **équivalentes** à « $u$ est nilpotent ».",
+      "options": [
+        "$\\chi_u = X^n$",
+        "$u^n = 0$",
+        "$u$ est trigonalisable et sa seule valeur propre est $0$",
+        "$\\operatorname{Sp}_{\\mathbb{R}}(u) = \\{0\\}$",
+        "$u$ n'est pas inversible"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Sur $\\mathbb{R}$, « seule valeur propre réelle $0$ » ne suffit pas : $\\begin{pmatrix}0&0&0\\\\0&0&-1\\\\0&1&0\\end{pmatrix}$ a pour polynôme caractéristique $X(X^2+1)$. Et « non inversible » signifie seulement que $0$ est valeur propre."
+    },
+    {
+      "id": "l5-q6",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "type": "tf",
+      "tag": "application",
+      "prompt": "Un endomorphisme à la fois nilpotent et diagonalisable est nul.",
+      "answer": true,
+      "explain": "Sa seule valeur propre est $0$ ; étant diagonalisable, sa matrice dans une base de vecteurs propres est la matrice nulle."
+    },
+    {
+      "id": "l5-q7",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "type": "mcq",
+      "tag": "application",
+      "prompt": "Quel est l'indice de nilpotence de $N = \\begin{pmatrix}0&1&0\\\\0&0&1\\\\0&0&0\\end{pmatrix}$ ?",
+      "options": [
+        "$3$",
+        "$2$",
+        "$1$",
+        "$N$ n'est pas nilpotente"
+      ],
+      "answer": 0,
+      "explain": "$N^2 = \\begin{pmatrix}0&0&1\\\\0&0&0\\\\0&0&0\\end{pmatrix} \\neq 0$ et $N^3 = 0$. C'est le cas d'indice maximal $n = 3$."
+    },
+    {
+      "id": "l5-q8",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "type": "tf",
+      "tag": "restitution",
+      "prompt": "Si $u$ est nilpotent d'indice $p$ sur un espace de dimension $n$, alors $p \\leq n$.",
+      "answer": true,
+      "explain": "$\\chi_u = X^n$, donc $u^n = 0$ par Cayley-Hamilton. Autre preuve classique : si $u^{p-1}(x) \\neq 0$, la famille $(x, u(x), \\dots, u^{p-1}(x))$ est libre."
+    },
+    {
+      "id": "l5-q9",
+      "lesson": "l5",
+      "notion": "n-dunford",
+      "type": "mcq",
+      "tag": "piege",
+      "prompt": "(Niveau agrégation) Quelle est la décomposition de Dunford $A = D + N$ de $A = \\begin{pmatrix}1&1\\\\0&2\\end{pmatrix}$ ?",
+      "options": [
+        "$D = A$ et $N = 0$, car $A$ est diagonalisable",
+        "$D = \\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}$ et $N = \\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$",
+        "Elle n'existe pas, car $A$ n'est pas diagonale",
+        "$D = I_2$ et $N = \\begin{pmatrix}0&1\\\\0&1\\end{pmatrix}$"
+      ],
+      "answer": 0,
+      "explain": "$A$ a deux valeurs propres distinctes, donc elle est diagonalisable : par unicité, $D = A$ et $N = 0$. Le découpage « diagonale + reste » est un piège classique : ses deux termes ne commutent pas."
+    },
+    {
+      "id": "l5-q10",
+      "lesson": "l5",
+      "notion": "n-dunford",
+      "type": "card",
+      "tag": "restitution",
+      "prompt": "(Niveau agrégation) Énoncez la décomposition de Dunford et expliquez pourquoi $d$ et $\\nu$ sont des polynômes en $u$.",
+      "back": "**Énoncé.** Si $\\chi_u$ est scindé sur $\\mathbb{K}$, il existe un unique couple $(d, \\nu)$ avec $u = d + \\nu$, $d$ diagonalisable, $\\nu$ nilpotent et $d \\circ \\nu = \\nu \\circ d$.\n**Polynômes en $u$.** Avec $\\chi_u = \\prod (X - \\lambda_i)^{m_i}$, le lemme des noyaux donne $E = \\bigoplus \\operatorname{Ker}(u - \\lambda_i \\mathrm{Id}_E)^{m_i}$, et les projecteurs $p_i$ associés sont des polynômes en $u$. Alors $d = \\sum \\lambda_i p_i$ et $\\nu = u - d$ le sont aussi.",
+      "explain": "Hors programme en MP. À l'agrégation, le jury insiste sur le fait que les composantes sont des polynômes en $u$."
+    },
+    {
+      "id": "ex-l1-a-s1",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-a",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme caractéristique de $A$ ?",
+      "options": [
+        "$X^2 - 7X + 10$",
+        "$X^2 + 7X + 10$",
+        "$X^2 - 7X + 12$",
+        "$X^2 - 7X - 10$"
+      ],
+      "answer": 0,
+      "explain": "En dimension 2, $\\chi_A = X^2 - \\operatorname{tr}(A)\\,X + \\det(A)$ avec $\\operatorname{tr}(A) = 7$ et $\\det(A) = 12 - 2 = 10$."
+    },
+    {
+      "id": "ex-l1-a-s2",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-a",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Quel est le spectre de $A$ ?",
+      "options": [
+        "$\\{2, 5\\}$",
+        "$\\{-2, -5\\}$",
+        "$\\{3, 4\\}$",
+        "$\\{1, 10\\}$"
+      ],
+      "answer": 0,
+      "explain": "$X^2 - 7X + 10 = (X - 2)(X - 5)$."
+    },
+    {
+      "id": "ex-l1-a-s3",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-a",
+      "step": 3,
+      "type": "mcq",
+      "prompt": "Quel est le sous-espace propre $E_5(A)$ ?",
+      "options": [
+        "$\\operatorname{Vect}((1, 1))$",
+        "$\\operatorname{Vect}((1, -1))$",
+        "$\\operatorname{Vect}((1, 2))$",
+        "$\\operatorname{Vect}((2, 1))$"
+      ],
+      "answer": 0,
+      "explain": "$A - 5I_2 = \\begin{pmatrix}-1&1\\\\2&-2\\end{pmatrix}$ : le système se réduit à $-x + y = 0$."
+    },
+    {
+      "id": "ex-l1-a-s4",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-a",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "Quel est le sous-espace propre $E_2(A)$ ?",
+      "options": [
+        "$\\operatorname{Vect}((1, -2))$",
+        "$\\operatorname{Vect}((1, 2))$",
+        "$\\operatorname{Vect}((2, -1))$",
+        "$\\operatorname{Vect}((1, 1))$"
+      ],
+      "answer": 0,
+      "explain": "$A - 2I_2 = \\begin{pmatrix}2&1\\\\2&1\\end{pmatrix}$ : le système se réduit à $2x + y = 0$. Les deux droites propres sont en somme directe et engendrent $\\mathbb{R}^2$."
+    },
+    {
+      "id": "ex-l1-b-s1",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-b",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Que peut-on dire de $x$ vis-à-vis de $u^2 = u \\circ u$ ?",
+      "options": [
+        "$x$ est vecteur propre de $u^2$ pour la valeur propre $\\lambda^2$",
+        "$x$ est vecteur propre de $u^2$ pour la valeur propre $2\\lambda$",
+        "$x$ est vecteur propre de $u^2$ pour la valeur propre $\\lambda$",
+        "$x$ n'est pas forcément vecteur propre de $u^2$"
+      ],
+      "answer": 0,
+      "explain": "$u^2(x) = u(\\lambda x) = \\lambda\\,u(x) = \\lambda^2 x$, et $x \\neq 0$."
+    },
+    {
+      "id": "ex-l1-b-s2",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-b",
+      "step": 2,
+      "type": "tf",
+      "prompt": "Si $u$ est inversible, alors $\\lambda \\neq 0$ et $x$ est vecteur propre de $u^{-1}$ pour la valeur propre $1/\\lambda$.",
+      "answer": true,
+      "explain": "Si $\\lambda = 0$, alors $x \\in \\operatorname{Ker} u$ avec $x \\neq 0$, ce qui contredit l'injectivité. Puis, en appliquant $u^{-1}$ à $u(x) = \\lambda x$ : $x = \\lambda\\,u^{-1}(x)$, donc $u^{-1}(x) = \\frac{1}{\\lambda} x$."
+    },
+    {
+      "id": "ex-l1-b-s3",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-b",
+      "step": 3,
+      "type": "tf",
+      "prompt": "On prend $\\mathbb{K} = \\mathbb{R}$. Toute valeur propre de $u^2$ est le carré d'une valeur propre de $u$.",
+      "answer": false,
+      "explain": "Pour $u$ de matrice $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$, on a $u^2 = -\\mathrm{Id}_E$ : $-1$ est valeur propre de $u^2$, alors que $u$ n'a aucune valeur propre réelle. Seule l'inclusion $\\{\\lambda^2 \\mid \\lambda \\in \\operatorname{Sp}(u)\\} \\subset \\operatorname{Sp}(u^2)$ est vraie en général."
+    },
+    {
+      "id": "ex-l1-b-s4",
+      "lesson": "l1",
+      "notion": "n-elements-propres",
+      "tag": "application",
+      "exercise": "ex-l1-b",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "On suppose de plus que $u^2 = u$. Quelles sont les valeurs possibles de $\\lambda$ ?",
+      "options": [
+        "$\\lambda \\in \\{0, 1\\}$",
+        "$\\lambda = 1$ uniquement",
+        "$\\lambda \\in \\{-1, 1\\}$",
+        "$\\lambda$ quelconque"
+      ],
+      "answer": 0,
+      "explain": "$\\lambda^2 x = u^2(x) = u(x) = \\lambda x$ et $x \\neq 0$, donc $\\lambda^2 = \\lambda$."
+    },
+    {
+      "id": "ex-l2-a-s1",
+      "lesson": "l2",
+      "notion": "n-multiplicites",
+      "tag": "application",
+      "exercise": "ex-l2-a",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme caractéristique de $A$ ?",
+      "options": [
+        "$(X-1)^2 (X-3)$",
+        "$(X-1)(X-3)$",
+        "$(X-1)(X-2)(X-3)$",
+        "$(X-1)(X-3)^2$"
+      ],
+      "answer": 0,
+      "explain": "$A$ est triangulaire supérieure : $\\chi_A$ est le produit des $X - a_{ii}$, de degré 3."
+    },
+    {
+      "id": "ex-l2-a-s2",
+      "lesson": "l2",
+      "notion": "n-multiplicites",
+      "tag": "application",
+      "exercise": "ex-l2-a",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Quelle est la dimension de $E_1(A)$ ?",
+      "options": [
+        "$1$",
+        "$2$",
+        "$3$",
+        "$0$"
+      ],
+      "answer": 0,
+      "explain": "$A - I_3 = \\begin{pmatrix}0&2&0\\\\0&0&0\\\\0&0&2\\end{pmatrix}$ est de rang 2, donc son noyau est de dimension $3 - 2 = 1$ (théorème du rang)."
+    },
+    {
+      "id": "ex-l2-a-s3",
+      "lesson": "l2",
+      "notion": "n-multiplicites",
+      "tag": "application",
+      "exercise": "ex-l2-a",
+      "step": 3,
+      "type": "tf",
+      "prompt": "La matrice $A$ est diagonalisable.",
+      "answer": false,
+      "explain": "$\\dim E_1(A) = 1 < 2 = m(1)$ : la somme des dimensions des sous-espaces propres vaut $1 + 1 = 2 < 3$."
+    },
+    {
+      "id": "ex-l2-a-s4",
+      "lesson": "l2",
+      "notion": "n-multiplicites",
+      "tag": "application",
+      "exercise": "ex-l2-a",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "Que valent $\\operatorname{tr}(A)$ et $\\det(A)$ ?",
+      "options": [
+        "$\\operatorname{tr}(A) = 5$ et $\\det(A) = 3$",
+        "$\\operatorname{tr}(A) = 4$ et $\\det(A) = 3$",
+        "$\\operatorname{tr}(A) = 5$ et $\\det(A) = 6$",
+        "$\\operatorname{tr}(A) = 7$ et $\\det(A) = 3$"
+      ],
+      "answer": 0,
+      "explain": "Somme et produit des racines de $\\chi_A$ comptées avec multiplicité : $1 + 1 + 3 = 5$ et $1 \\times 1 \\times 3 = 3$. On le lit aussi sur la diagonale."
+    },
+    {
+      "id": "ex-l2-b-s1",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "tag": "application",
+      "exercise": "ex-l2-b",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme caractéristique de $C$ ?",
+      "options": [
+        "$X^3 + aX^2 + bX + c$",
+        "$X^3 - aX^2 - bX - c$",
+        "$X^3 + cX^2 + bX + a$",
+        "$(X+a)(X+b)(X+c)$"
+      ],
+      "answer": 0,
+      "explain": "On développe $\\det(X I_3 - C) = \\begin{vmatrix}X&0&c\\\\-1&X&b\\\\0&-1&X+a\\end{vmatrix}$ selon la première ligne : $X\\big(X(X+a) + b\\big) + c \\times 1$."
+    },
+    {
+      "id": "ex-l2-b-s2",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "tag": "application",
+      "exercise": "ex-l2-b",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Pour quel triplet $(a, b, c)$ la matrice $C$ a-t-elle pour polynôme caractéristique $X^3 - 1$ ?",
+      "options": [
+        "$(0, 0, -1)$",
+        "$(0, 0, 1)$",
+        "$(-1, 0, 0)$",
+        "$(1, 1, 1)$"
+      ],
+      "answer": 0,
+      "explain": "Par identification avec $X^3 + aX^2 + bX + c$. Toute famille de coefficients est ainsi réalisée : tout polynôme unitaire est un polynôme caractéristique."
+    },
+    {
+      "id": "ex-l2-b-s3",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "tag": "application",
+      "exercise": "ex-l2-b",
+      "step": 3,
+      "type": "tf",
+      "prompt": "Pour ce triplet, $C$ est diagonalisable sur $\\mathbb{R}$.",
+      "answer": false,
+      "explain": "$X^3 - 1 = (X - 1)(X^2 + X + 1)$ n'est pas scindé sur $\\mathbb{R}$ : $C$ n'est même pas trigonalisable sur $\\mathbb{R}$."
+    },
+    {
+      "id": "ex-l2-b-s4",
+      "lesson": "l2",
+      "notion": "n-poly-car",
+      "tag": "application",
+      "exercise": "ex-l2-b",
+      "step": 4,
+      "type": "tf",
+      "prompt": "Pour ce triplet, $C$ est diagonalisable sur $\\mathbb{C}$.",
+      "answer": true,
+      "explain": "Sur $\\mathbb{C}$, $X^3 - 1$ a trois racines distinctes $1$, $j$ et $j^2$ : trois valeurs propres distinctes en dimension 3."
+    },
+    {
+      "id": "ex-l3-a-s1",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-a",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le spectre de $A$ ?",
+      "options": [
+        "$\\{-1, 3\\}$",
+        "$\\{1, 2\\}$",
+        "$\\{1, -3\\}$",
+        "$\\{1, 3\\}$"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_A = X^2 - 2X - 3 = (X - 3)(X + 1)$."
+    },
+    {
+      "id": "ex-l3-a-s2",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-a",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Laquelle de ces matrices $P$ vérifie $P^{-1} A P = \\begin{pmatrix}3&0\\\\0&-1\\end{pmatrix}$ ?",
+      "options": [
+        "$\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}$",
+        "$\\begin{pmatrix}1&1\\\\-1&1\\end{pmatrix}$",
+        "$\\begin{pmatrix}1&2\\\\2&1\\end{pmatrix}$",
+        "$\\begin{pmatrix}3&0\\\\0&-1\\end{pmatrix}$"
+      ],
+      "answer": 0,
+      "explain": "Les colonnes de $P$ sont des vecteurs propres, **dans l'ordre** des valeurs propres de la matrice diagonale : $(1,1)$ pour $3$, puis $(1,-1)$ pour $-1$. La deuxième proposition donne $\\operatorname{diag}(-1, 3)$."
+    },
+    {
+      "id": "ex-l3-a-s3",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-a",
+      "step": 3,
+      "type": "mcq",
+      "prompt": "Que vaut $A^n$ pour $n \\in \\mathbb{N}$ ?",
+      "options": [
+        "$\\dfrac{1}{2}\\begin{pmatrix}3^n + (-1)^n & 3^n - (-1)^n\\\\ 3^n - (-1)^n & 3^n + (-1)^n\\end{pmatrix}$",
+        "$\\begin{pmatrix}3^n + (-1)^n & 3^n - (-1)^n\\\\ 3^n - (-1)^n & 3^n + (-1)^n\\end{pmatrix}$",
+        "$\\begin{pmatrix}1 & 2^n\\\\ 2^n & 1\\end{pmatrix}$",
+        "$\\dfrac{1}{2}\\begin{pmatrix}3^n - (-1)^n & 3^n + (-1)^n\\\\ 3^n + (-1)^n & 3^n - (-1)^n\\end{pmatrix}$"
+      ],
+      "answer": 0,
+      "explain": "$A^n = P \\begin{pmatrix}3^n&0\\\\0&(-1)^n\\end{pmatrix} P^{-1}$ avec $P^{-1} = \\frac{1}{2}\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}$. Vérification pour $n = 0$ et $n = 1$ : on retrouve $I_2$ et $A$."
+    },
+    {
+      "id": "ex-l3-b-s1",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-b",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme caractéristique de $M_a$ ?",
+      "options": [
+        "$(X-1)^2 (X-2)$, pour tout $a$",
+        "$(X-1)(X-2)$, pour tout $a$",
+        "$(X-1)(X-a)(X-2)$",
+        "Il dépend de $a$ de façon plus compliquée"
+      ],
+      "answer": 0,
+      "explain": "$M_a$ est triangulaire supérieure : $\\chi_{M_a}$ ne dépend que de sa diagonale. Il est scindé, donc tout se joue sur $\\dim E_1(M_a)$."
+    },
+    {
+      "id": "ex-l3-b-s2",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-b",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Quel est le rang de $M_a - I_3$ ?",
+      "options": [
+        "$2$ si $a \\neq 0$, et $1$ si $a = 0$",
+        "$2$ pour tout $a$",
+        "$1$ pour tout $a$",
+        "$1$ si $a \\neq 0$, et $2$ si $a = 0$"
+      ],
+      "answer": 0,
+      "explain": "$M_a - I_3 = \\begin{pmatrix}0&a&0\\\\0&0&0\\\\0&0&1\\end{pmatrix}$ : les colonnes non nulles sont $(a, 0, 0)$ et $(0, 0, 1)$."
+    },
+    {
+      "id": "ex-l3-b-s3",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-b",
+      "step": 3,
+      "type": "mcq",
+      "prompt": "Pour quelles valeurs de $a$ la matrice $M_a$ est-elle diagonalisable ?",
+      "options": [
+        "Uniquement pour $a = 0$",
+        "Pour tout $a$",
+        "Pour aucun $a$",
+        "Pour tout $a \\neq 0$"
+      ],
+      "answer": 0,
+      "explain": "$\\dim E_1(M_a) = 3 - \\operatorname{rg}(M_a - I_3)$ vaut $m(1) = 2$ si et seulement si $a = 0$, et $\\dim E_2(M_a) = 1 = m(2)$ dans tous les cas."
+    },
+    {
+      "id": "ex-l3-c-s1",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-c",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quelle est la dimension de $E_0(A) = \\operatorname{Ker} A$ ?",
+      "options": [
+        "$n - 1$",
+        "$1$",
+        "$n$",
+        "$0$"
+      ],
+      "answer": 0,
+      "explain": "Théorème du rang : $\\dim \\operatorname{Ker} A = n - \\operatorname{rg}(A) = n - 1$. Donc $0$ est valeur propre, de multiplicité au moins $n - 1$."
+    },
+    {
+      "id": "ex-l3-c-s2",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-c",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Que vaut le produit $A\\,C$ ?",
+      "options": [
+        "$\\operatorname{tr}(A)\\, C$",
+        "$0$",
+        "$C$",
+        "$\\det(A)\\, C$"
+      ],
+      "answer": 0,
+      "explain": "$A C = C (L C)$, où $LC$ est un scalaire. Or $LC = \\operatorname{tr}(LC) = \\operatorname{tr}(CL) = \\operatorname{tr}(A)$."
+    },
+    {
+      "id": "ex-l3-c-s3",
+      "lesson": "l3",
+      "notion": "n-diagonalisable",
+      "tag": "application",
+      "exercise": "ex-l3-c",
+      "step": 3,
+      "type": "mcq",
+      "prompt": "À quelle condition $A$ est-elle diagonalisable ?",
+      "options": [
+        "Si et seulement si $\\operatorname{tr}(A) \\neq 0$",
+        "Toujours",
+        "Jamais",
+        "Si et seulement si $A$ est symétrique"
+      ],
+      "answer": 0,
+      "explain": "Si $\\operatorname{tr}(A) \\neq 0$ : $C$ est vecteur propre pour $\\operatorname{tr}(A) \\neq 0$, donc $\\dim E_0 + \\dim E_{\\operatorname{tr}(A)} \\geq (n-1) + 1 = n$. Si $\\operatorname{tr}(A) = 0$ : comme $m(0) \\geq \\dim E_0 = n - 1$, on a $\\chi_A = X^{n-1}(X - \\alpha)$, et le coefficient de $X^{n-1}$ donne $\\alpha = \\operatorname{tr}(A) = 0$. Donc $\\chi_A = X^n$, la seule valeur propre est $0$ et $\\dim E_0 = n - 1 < n$."
+    },
+    {
+      "id": "ex-l4-a-s1",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-a",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Que peut-on dire du spectre de $A$ ?",
+      "options": [
+        "$\\operatorname{Sp}(A) \\subset \\{1, 2\\}$",
+        "$\\operatorname{Sp}(A) = \\{1, 2\\}$",
+        "$\\operatorname{Sp}(A) \\subset \\{-1, -2\\}$",
+        "$\\operatorname{Sp}(A) \\subset \\{0, 3\\}$"
+      ],
+      "answer": 0,
+      "explain": "$X^2 - 3X + 2 = (X-1)(X-2)$ annule $A$, donc toute valeur propre en est racine. L'inclusion peut être stricte : $A = I_n$ convient et son spectre est $\\{1\\}$."
+    },
+    {
+      "id": "ex-l4-a-s2",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-a",
+      "step": 2,
+      "type": "tf",
+      "prompt": "$A$ est diagonalisable sur $\\mathbb{R}$.",
+      "answer": true,
+      "explain": "$(X-1)(X-2)$ est un polynôme annulateur scindé sur $\\mathbb{R}$ à racines simples."
+    },
+    {
+      "id": "ex-l4-a-s3",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-a",
+      "step": 3,
+      "type": "tf",
+      "prompt": "$A$ est inversible.",
+      "answer": true,
+      "explain": "$0$ n'est pas racine du polynôme annulateur, donc $0$ n'est pas valeur propre de $A$."
+    },
+    {
+      "id": "ex-l4-a-s4",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-a",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "Quelle est l'expression de $A^{-1}$ ?",
+      "options": [
+        "$\\frac{1}{2}(3I_n - A)$",
+        "$\\frac{1}{2}(A - 3I_n)$",
+        "$A - 3I_n$",
+        "$2(3I_n - A)$"
+      ],
+      "answer": 0,
+      "explain": "La relation s'écrit $A(3I_n - A) = 2I_n$."
+    },
+    {
+      "id": "ex-l4-b-s1",
+      "lesson": "l4",
+      "notion": "n-poly-minimal",
+      "tag": "application",
+      "exercise": "ex-l4-b",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme minimal de $A$ ?",
+      "options": [
+        "$(X-1)(X-2)$",
+        "$(X-1)^2(X-2)$",
+        "$X - 1$",
+        "$X - 2$"
+      ],
+      "answer": 0,
+      "explain": "$A$ est diagonale de valeurs propres $1$ et $2$ : $(A - I_3)(A - 2I_3) = 0$, et aucun polynôme de degré 1 n'annule $A$ puisque $A$ n'est pas une homothétie."
+    },
+    {
+      "id": "ex-l4-b-s2",
+      "lesson": "l4",
+      "notion": "n-poly-minimal",
+      "tag": "application",
+      "exercise": "ex-l4-b",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme minimal de $B$ ?",
+      "options": [
+        "$(X-1)^2(X-2)$",
+        "$(X-1)(X-2)$",
+        "$(X-1)^2$",
+        "$(X-1)(X-2)^2$"
+      ],
+      "answer": 0,
+      "explain": "$\\pi_B$ divise $\\chi_B = (X-1)^2(X-2)$ et admet $1$ et $2$ pour racines. Or $(B - I_3)(B - 2I_3) \\neq 0$ : sa première ligne est $(0, -1, 0)$. Donc $\\pi_B = \\chi_B$."
+    },
+    {
+      "id": "ex-l4-b-s3",
+      "lesson": "l4",
+      "notion": "n-poly-minimal",
+      "tag": "application",
+      "exercise": "ex-l4-b",
+      "step": 3,
+      "type": "tf",
+      "prompt": "$A$ et $B$ ont le même polynôme caractéristique, mais ne sont pas semblables.",
+      "answer": true,
+      "explain": "Deux matrices semblables ont le même polynôme minimal, ce qui n'est pas le cas ici. Autre argument : $A$ est diagonalisable et $B$ ne l'est pas."
+    },
+    {
+      "id": "ex-l4-c-s1",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-c",
+      "step": 1,
+      "type": "tf",
+      "prompt": "$A$ possède au moins une valeur propre réelle.",
+      "answer": false,
+      "explain": "Une valeur propre réelle serait racine de $X^2 + X + 1$, dont le discriminant vaut $-3 < 0$."
+    },
+    {
+      "id": "ex-l4-c-s2",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-c",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Que peut-on en déduire sur $n$ ?",
+      "options": [
+        "$n$ est pair",
+        "$n$ est impair",
+        "$n = 2$",
+        "Rien"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_A$ est un polynôme réel de degré $n$ sans racine réelle. Or un polynôme réel de degré impair a une racine réelle. Donc $n$ est pair."
+    },
+    {
+      "id": "ex-l4-c-s3",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-c",
+      "step": 3,
+      "type": "tf",
+      "prompt": "$A$ est diagonalisable sur $\\mathbb{C}$.",
+      "answer": true,
+      "explain": "$X^2 + X + 1 = (X - j)(X - \\bar{j})$ avec $j = e^{2i\\pi/3}$ : annulateur scindé à racines simples sur $\\mathbb{C}$."
+    },
+    {
+      "id": "ex-l4-c-s4",
+      "lesson": "l4",
+      "notion": "n-critere-annulateur",
+      "tag": "application",
+      "exercise": "ex-l4-c",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "Que vaut $\\det(A)$ ?",
+      "options": [
+        "$1$",
+        "$-1$",
+        "$0$",
+        "Cela dépend de $A$"
+      ],
+      "answer": 0,
+      "explain": "Les valeurs propres complexes de $A$ sont parmi $j$ et $\\bar{j}$. Comme $\\chi_A$ est à coefficients réels, $j$ et $\\bar{j}$ ont la même multiplicité, soit $n/2$. Donc $\\det(A) = (j\\,\\bar{j})^{n/2} = |j|^{n} = 1$."
+    },
+    {
+      "id": "ex-l5-a-s1",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "tag": "application",
+      "exercise": "ex-l5-a",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le polynôme caractéristique de $A$ ?",
+      "options": [
+        "$(X-1)^2$",
+        "$X^2 - 2X - 1$",
+        "$X(X-2)$",
+        "$(X+1)^2$"
+      ],
+      "answer": 0,
+      "explain": "$\\operatorname{tr}(A) = 2$ et $\\det(A) = 0 + 1 = 1$, donc $\\chi_A = X^2 - 2X + 1$."
+    },
+    {
+      "id": "ex-l5-a-s2",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "tag": "application",
+      "exercise": "ex-l5-a",
+      "step": 2,
+      "type": "tf",
+      "prompt": "$A$ est diagonalisable.",
+      "answer": false,
+      "explain": "Sa seule valeur propre est $1$ : si elle était diagonalisable, elle serait semblable à $I_2$, donc égale à $I_2$. Elle est en revanche trigonalisable, car $\\chi_A$ est scindé."
+    },
+    {
+      "id": "ex-l5-a-s3",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "tag": "application",
+      "exercise": "ex-l5-a",
+      "step": 3,
+      "type": "mcq",
+      "prompt": "Quel est le sous-espace propre $E_1(A)$ ?",
+      "options": [
+        "$\\operatorname{Vect}((1, -1))$",
+        "$\\operatorname{Vect}((1, 1))$",
+        "$\\operatorname{Vect}((1, 0))$",
+        "$\\mathbb{R}^2$"
+      ],
+      "answer": 0,
+      "explain": "$A - I_2 = \\begin{pmatrix}1&1\\\\-1&-1\\end{pmatrix}$ : le système se réduit à $x + y = 0$."
+    },
+    {
+      "id": "ex-l5-a-s4",
+      "lesson": "l5",
+      "notion": "n-trigonalisable",
+      "tag": "application",
+      "exercise": "ex-l5-a",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "On pose $e_1 = (1, -1)$ et $e_2 = (1, 0)$. Quelle est la matrice de l'endomorphisme canoniquement associé à $A$ dans la base $(e_1, e_2)$ ?",
+      "options": [
+        "$\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$",
+        "$\\begin{pmatrix}1&0\\\\1&1\\end{pmatrix}$",
+        "$\\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}$",
+        "$\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}$"
+      ],
+      "answer": 0,
+      "explain": "$A e_1 = e_1$ et $A e_2 = (2, -1) = e_1 + e_2$. Les colonnes de la matrice sont les coordonnées de $A e_1$ et $A e_2$ dans $(e_1, e_2)$."
+    },
+    {
+      "id": "ex-l5-b-s1",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-b",
+      "step": 1,
+      "type": "mcq",
+      "prompt": "Quel est le spectre de $N$ ?",
+      "options": [
+        "$\\{0\\}$",
+        "$\\varnothing$",
+        "$\\{0, 1\\}$",
+        "Cela dépend de $N$"
+      ],
+      "answer": 0,
+      "explain": "$\\chi_N = X^n$ : la seule racine est $0$, et c'est bien une valeur propre puisque $n \\geq 1$."
+    },
+    {
+      "id": "ex-l5-b-s2",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-b",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "Que vaut $\\det(I_n + N)$ ?",
+      "options": [
+        "$1$",
+        "$0$",
+        "$(-1)^n$",
+        "$n$"
+      ],
+      "answer": 0,
+      "explain": "$N$ est semblable à une matrice triangulaire $T$ de diagonale nulle, donc $I_n + N$ est semblable à $I_n + T$, triangulaire de diagonale formée de $1$."
+    },
+    {
+      "id": "ex-l5-b-s3",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-b",
+      "step": 3,
+      "type": "tf",
+      "prompt": "$I_n + N$ est inversible, d'inverse $I_n - N + N^2 - \\dots + (-1)^{n-1} N^{n-1}$.",
+      "answer": true,
+      "explain": "Le produit $(I_n + N)\\sum_{k=0}^{n-1} (-1)^k N^k$ est télescopique et vaut $I_n - (-1)^n N^n = I_n$, car $N^n = 0$."
+    },
+    {
+      "id": "ex-l5-b-s4",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-b",
+      "step": 4,
+      "type": "tf",
+      "prompt": "Si $N \\neq 0$, la matrice $I_n + N$ est diagonalisable.",
+      "answer": false,
+      "explain": "Sa seule valeur propre est $1$ : diagonalisable, elle serait égale à $I_n$, c'est-à-dire $N = 0$."
+    },
+    {
+      "id": "ex-l5-c-s1",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-c",
+      "step": 1,
+      "type": "tf",
+      "prompt": "La suite $(N_k)_{k \\in \\mathbb{N}}$ est croissante pour l'inclusion.",
+      "answer": true,
+      "explain": "Si $u^k(x) = 0$, alors $u^{k+1}(x) = u(u^k(x)) = 0$."
+    },
+    {
+      "id": "ex-l5-c-s2",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-c",
+      "step": 2,
+      "type": "mcq",
+      "prompt": "On suppose que $N_k = N_{k+1}$ pour un certain $k$. Que peut-on affirmer, pour un endomorphisme $u$ quelconque ?",
+      "options": [
+        "$N_{k+1} = N_{k+2}$ : la suite est stationnaire à partir du rang $k$",
+        "$u^k = 0$",
+        "$u$ est inversible",
+        "$N_k = E$"
+      ],
+      "answer": 0,
+      "explain": "Si $x \\in N_{k+2}$, alors $u(x) \\in N_{k+1} = N_k$, donc $u^{k+1}(x) = 0$, soit $x \\in N_{k+1}$. Les autres affirmations sont fausses en général : pour $u = \\mathrm{Id}_E$, tous les $N_k$ valent $\\{0\\}$ alors que $u^k \\neq 0$ ; pour $u = 0$ et $k = 1$, on a $N_1 = N_2 = E$ alors que $u$ n'est pas inversible."
+    },
+    {
+      "id": "ex-l5-c-s3",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-c",
+      "step": 3,
+      "type": "mcq",
+      "prompt": "On suppose $u$ nilpotent d'indice $p$. D'après l'étape précédente, la suite $(N_k)$ est strictement croissante pour $0 \\leq k \\leq p$. Qu'en déduit-on ?",
+      "options": [
+        "$p \\leq n$",
+        "$p = n$",
+        "$p \\geq n$",
+        "$\\dim \\operatorname{Ker} u = 1$"
+      ],
+      "answer": 0,
+      "explain": "Si $N_k = N_{k+1}$ avec $k < p$, la suite stationnerait dès le rang $k$, d'où $N_k = N_p = E$ et $u^k = 0$ : impossible puisque $k < p$. Les dimensions vérifient donc $0 = \\dim N_0 < \\dim N_1 < \\dots < \\dim N_p = n$ : ce sont $p + 1$ entiers distincts entre $0$ et $n$, donc $p \\leq n$."
+    },
+    {
+      "id": "ex-l5-c-s4",
+      "lesson": "l5",
+      "notion": "n-nilpotent",
+      "tag": "application",
+      "exercise": "ex-l5-c",
+      "step": 4,
+      "type": "mcq",
+      "prompt": "Soit $N \\in \\mathcal{M}_3(\\mathbb{K})$ nilpotente telle que $\\dim \\operatorname{Ker} N = 1$. Quel est son indice de nilpotence ?",
+      "options": [
+        "$3$",
+        "$2$",
+        "$1$",
+        "On ne peut pas conclure"
+      ],
+      "answer": 0,
+      "explain": "L'application $u^k$ envoie $N_{k+1}$ dans $N_1$ et son noyau, restreint à $N_{k+1}$, est $N_k$ : par le théorème du rang, $\\dim N_{k+1} - \\dim N_k \\leq \\dim N_1 = 1$. Les dimensions croissent strictement par pas d'au plus 1 jusqu'à 3 : elles valent $1, 2, 3$, et l'indice est $3$."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex-l1-a",
+      "lesson": "l1",
+      "level": 1,
+      "notion": "n-elements-propres",
+      "title": "Éléments propres d'une matrice 2 × 2",
+      "origin": null,
+      "statement": "On considère $A = \\begin{pmatrix}4&1\\\\2&3\\end{pmatrix} \\in \\mathcal{M}_2(\\mathbb{R})$.",
+      "steps": [
+        "ex-l1-a-s1",
+        "ex-l1-a-s2",
+        "ex-l1-a-s3",
+        "ex-l1-a-s4"
+      ]
+    },
+    {
+      "id": "ex-l1-b",
+      "lesson": "l1",
+      "level": 2,
+      "notion": "n-elements-propres",
+      "title": "Valeurs propres de u², de l'inverse",
+      "origin": null,
+      "statement": "Soient $u \\in \\mathcal{L}(E)$, $\\lambda \\in \\mathbb{K}$ et $x \\neq 0$ tels que $u(x) = \\lambda x$.",
+      "steps": [
+        "ex-l1-b-s1",
+        "ex-l1-b-s2",
+        "ex-l1-b-s3",
+        "ex-l1-b-s4"
+      ]
+    },
+    {
+      "id": "ex-l2-a",
+      "lesson": "l2",
+      "level": 1,
+      "notion": "n-multiplicites",
+      "title": "Multiplicité et dimension",
+      "origin": null,
+      "statement": "On considère $A = \\begin{pmatrix}1&2&0\\\\0&1&0\\\\0&0&3\\end{pmatrix} \\in \\mathcal{M}_3(\\mathbb{R})$.",
+      "steps": [
+        "ex-l2-a-s1",
+        "ex-l2-a-s2",
+        "ex-l2-a-s3",
+        "ex-l2-a-s4"
+      ]
+    },
+    {
+      "id": "ex-l2-b",
+      "lesson": "l2",
+      "level": 2,
+      "notion": "n-poly-car",
+      "title": "Matrice compagnon",
+      "origin": null,
+      "statement": "Pour $a, b, c \\in \\mathbb{R}$, on pose $C = \\begin{pmatrix}0&0&-c\\\\1&0&-b\\\\0&1&-a\\end{pmatrix}$.",
+      "steps": [
+        "ex-l2-b-s1",
+        "ex-l2-b-s2",
+        "ex-l2-b-s3",
+        "ex-l2-b-s4"
+      ]
+    },
+    {
+      "id": "ex-l3-a",
+      "lesson": "l3",
+      "level": 1,
+      "notion": "n-diagonalisable",
+      "title": "Diagonaliser et calculer une puissance",
+      "origin": null,
+      "statement": "On considère $A = \\begin{pmatrix}1&2\\\\2&1\\end{pmatrix} \\in \\mathcal{M}_2(\\mathbb{R})$.",
+      "steps": [
+        "ex-l3-a-s1",
+        "ex-l3-a-s2",
+        "ex-l3-a-s3"
+      ]
+    },
+    {
+      "id": "ex-l3-b",
+      "lesson": "l3",
+      "level": 2,
+      "notion": "n-diagonalisable",
+      "title": "Diagonalisabilité selon un paramètre",
+      "origin": null,
+      "statement": "Pour $a \\in \\mathbb{R}$, on pose $M_a = \\begin{pmatrix}1&a&0\\\\0&1&0\\\\0&0&2\\end{pmatrix}$.",
+      "steps": [
+        "ex-l3-b-s1",
+        "ex-l3-b-s2",
+        "ex-l3-b-s3"
+      ]
+    },
+    {
+      "id": "ex-l3-c",
+      "lesson": "l3",
+      "level": 3,
+      "notion": "n-diagonalisable",
+      "title": "Matrices de rang 1",
+      "origin": "Exercice classique d'oral",
+      "statement": "Soient $n \\geq 2$ et $A \\in \\mathcal{M}_n(\\mathbb{K})$ une matrice de rang $1$. On écrit $A = C L$ où $C$ est une colonne non nulle et $L$ une ligne non nulle.",
+      "steps": [
+        "ex-l3-c-s1",
+        "ex-l3-c-s2",
+        "ex-l3-c-s3"
+      ]
+    },
+    {
+      "id": "ex-l4-a",
+      "lesson": "l4",
+      "level": 1,
+      "notion": "n-critere-annulateur",
+      "title": "Exploiter un polynôme annulateur",
+      "origin": null,
+      "statement": "Soit $A \\in \\mathcal{M}_n(\\mathbb{R})$ telle que $A^2 - 3A + 2I_n = 0$.",
+      "steps": [
+        "ex-l4-a-s1",
+        "ex-l4-a-s2",
+        "ex-l4-a-s3",
+        "ex-l4-a-s4"
+      ]
+    },
+    {
+      "id": "ex-l4-b",
+      "lesson": "l4",
+      "level": 2,
+      "notion": "n-poly-minimal",
+      "title": "Polynôme minimal et similitude",
+      "origin": null,
+      "statement": "On considère $A = \\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&2\\end{pmatrix}$ et $B = \\begin{pmatrix}1&1&0\\\\0&1&0\\\\0&0&2\\end{pmatrix}$.",
+      "steps": [
+        "ex-l4-b-s1",
+        "ex-l4-b-s2",
+        "ex-l4-b-s3"
+      ]
+    },
+    {
+      "id": "ex-l4-c",
+      "lesson": "l4",
+      "level": 3,
+      "notion": "n-critere-annulateur",
+      "title": "Un annulateur sans racine réelle",
+      "origin": "Exercice classique d'oral",
+      "statement": "Soit $A \\in \\mathcal{M}_n(\\mathbb{R})$ telle que $A^2 + A + I_n = 0$.",
+      "steps": [
+        "ex-l4-c-s1",
+        "ex-l4-c-s2",
+        "ex-l4-c-s3",
+        "ex-l4-c-s4"
+      ]
+    },
+    {
+      "id": "ex-l5-a",
+      "lesson": "l5",
+      "level": 1,
+      "notion": "n-trigonalisable",
+      "title": "Trigonaliser une matrice 2 × 2",
+      "origin": null,
+      "statement": "On considère $A = \\begin{pmatrix}2&1\\\\-1&0\\end{pmatrix} \\in \\mathcal{M}_2(\\mathbb{R})$.",
+      "steps": [
+        "ex-l5-a-s1",
+        "ex-l5-a-s2",
+        "ex-l5-a-s3",
+        "ex-l5-a-s4"
+      ]
+    },
+    {
+      "id": "ex-l5-b",
+      "lesson": "l5",
+      "level": 2,
+      "notion": "n-nilpotent",
+      "title": "Autour de I + N",
+      "origin": null,
+      "statement": "Soit $N \\in \\mathcal{M}_n(\\mathbb{K})$ une matrice nilpotente.",
+      "steps": [
+        "ex-l5-b-s1",
+        "ex-l5-b-s2",
+        "ex-l5-b-s3",
+        "ex-l5-b-s4"
+      ]
+    },
+    {
+      "id": "ex-l5-c",
+      "lesson": "l5",
+      "level": 3,
+      "notion": "n-nilpotent",
+      "title": "Noyaux itérés",
+      "origin": "Niveau agrégation (leçon sur les endomorphismes nilpotents)",
+      "statement": "Soit $u \\in \\mathcal{L}(E)$ avec $\\dim E = n$. Pour $k \\in \\mathbb{N}$, on note $N_k = \\operatorname{Ker}(u^k)$, avec $N_0 = \\{0\\}$.",
+      "steps": [
+        "ex-l5-c-s1",
+        "ex-l5-c-s2",
+        "ex-l5-c-s3",
+        "ex-l5-c-s4"
+      ]
+    }
+  ]
+}
