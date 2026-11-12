@@ -29,6 +29,9 @@ en HTTPS (n'importe quel hébergement de fichiers statiques convient).
 | `js/engine.js` | Moteur pur : espacement des révisions, série et gels, fusion de progressions |
 | `js/text.js` | Mise en forme des textes et des formules (KaTeX) |
 | `js/store.js` | Stockage local et synchronisation (adaptateur remplaçable) |
+| `js/config.js` | Adresse et clé publique du service de comptes (vides = comptes désactivés) |
+| `js/sync-supabase.js` | Connexion par code e-mail et synchronisation avec un projet Supabase |
+| `supabase/schema.sql` | Table et règles d'accès de la base de synchronisation |
 | `js/app.js` | Interface : écrans, séances, correction |
 | `content-src/reduction.js` | **Contenu à éditer** : fiches, leçons et questions de cours |
 | `content-src/reduction-complements.js` | Exemples, prérequis et démonstrations complètes de chaque fiche |
@@ -64,9 +67,29 @@ Règles :
 ## Synchronisation
 
 `js/store.js` écrit d'abord sur l'appareil, puis fusionne avec le compte quand un service de
-synchronisation est branché. Ce dépôt n'en embarque aucun : la progression reste sur l'appareil.
-Pour brancher un serveur (lot 1 : comptes par e-mail), fournir à `LemmeStore.init()` un
-adaptateur à trois fonctions : `connect()`, `pull()`, `push()`.
+synchronisation est branché. Tant que `js/config.js` est vide, les comptes sont désactivés et la
+progression reste sur l'appareil.
+
+### Activer la synchronisation
+
+Le service utilisé est Supabase (base PostgreSQL et comptes), avec un projet hébergé en Europe.
+
+1. Créer un projet sur supabase.com en choisissant une région européenne (Paris, Francfort…).
+2. Dans l'éditeur SQL du projet, exécuter le contenu de `supabase/schema.sql`.
+3. Dans Authentication > Emails, modifier le modèle « Magic Link » pour qu'il contienne le code
+   à saisir, par exemple : `<p>Votre code de connexion à Lemme : {{ .Token }}</p>`.
+4. Dans Project Settings > API, copier l'adresse du projet et la clé publique dans `js/config.js`.
+   Ne jamais y mettre la clé `service_role` / `secret`.
+
+La connexion se fait par un code à usage unique reçu par e-mail, sans mot de passe. À la première
+connexion, la progression de l'appareil est fusionnée avec celle du compte.
+
+Limites à connaître : l'envoi d'e-mails intégré à Supabase est limité à quelques messages par
+heure (brancher un service d'envoi pour un usage réel) ; la suppression complète d'un compte se
+fait depuis le tableau de bord Supabase.
+
+Pour brancher un autre serveur, fournir à `LemmeStore.init()` un adaptateur à trois fonctions :
+`connect()`, `pull()`, `push()`.
 
 ## Intégration et déploiement continus
 
@@ -77,7 +100,7 @@ adaptateur à trois fonctions : `connect()`, `pull()`, `push()`.
 
 ## Limites connues du lot 0
 
-- Stockage local dans `localStorage` (IndexedDB prévu au lot 1).
+- Stockage local dans `localStorage` (IndexedDB prévu ensuite).
 - Pas encore de notifications de rappel, de mode examen, ni de bouton de signalement.
 - Formats de questions disponibles : choix unique, choix multiples, vrai ou faux,
   démonstration à ordonner, carte de restitution, exercice à étapes.

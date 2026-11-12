@@ -42,8 +42,14 @@
     session: null, // séance en cours
     search: '', // filtre de la bibliothèque
     confirmReset: false, // demande de confirmation avant effacement
-    copied: false // retour visuel après « Copier mes données »
+    copied: false, // retour visuel après « Copier mes données »
+    // Connexion au compte : étape ('email' puis 'code'), adresse saisie, attente, message d'erreur.
+    account: { step: 'email', email: '', busy: false, error: '' }
   };
+
+  const Account = window.LemmeAccount;
+  // Les comptes par e-mail ne s'affichent que s'ils sont configurés et qu'aucun hébergeur ne fournit déjà la synchronisation.
+  const accountsEnabled = !!(Account && Account.configured && !window.LEMME_SYNC_ADAPTER);
 
   const today = function () { return E.dayKey(new Date()); };
   const progress = function () {
@@ -525,8 +531,11 @@
         '<b>' + g + '</b><small>points · ' + label + '</small></button>';
     }).join('');
 
+    const signedIn = accountsEnabled && Account.email();
     const syncText = {
-      local: 'Progression enregistrée sur cet appareil uniquement. Aucun compte n\'est disponible dans cette vue.',
+      local: accountsEnabled
+        ? 'Progression enregistrée sur cet appareil. Connectez-vous pour la retrouver sur tous vos appareils.'
+        : 'Progression enregistrée sur cet appareil uniquement. Aucun compte n\'est disponible dans cette vue.',
       syncing: 'Synchronisation en cours…',
       synced: 'Progression synchronisée avec votre compte.',
       error: 'Synchronisation impossible pour le moment. La progression reste enregistrée sur cet appareil et sera renvoyée au prochain enregistrement.'
@@ -556,6 +565,7 @@
         '<h2>Compte et données</h2>' +
         '<p class="sync s-' + sync.sync + '"><span class="sync-dot"></span>' + syncText + '</p>' +
         (sync.localOk ? '' : '<p class="warn-text">Le stockage de ce navigateur est indisponible : la progression sera perdue à la fermeture de la page.</p>') +
+        (accountsEnabled ? renderAccount(signedIn) : '') +
         '<div class="stack">' +
           '<button class="btn ghost" data-act="copy-data"><span>' + (ui.copied ? 'Données copiées' : 'Copier mes données') + '</span><small>Export au format JSON dans le presse-papiers</small></button>' +
           (ui.confirmReset
@@ -565,6 +575,30 @@
             : '<button class="btn ghost danger-text" data-act="reset-ask"><span>Effacer ma progression</span></button>') +
         '</div>' +
       '</section>';
+  }
+
+  /** Bloc de connexion du profil : adresse, puis code reçu par e-mail ; ou compte connecté. */
+  function renderAccount(signedIn) {
+    const a = ui.account;
+    const error = a.error ? '<p class="warn-text" role="alert">' + T.esc(a.error) + '</p>' : '';
+    if (signedIn) {
+      return '<div class="account"><p class="meta">Connecté : <b>' + T.esc(signedIn) + '</b></p>' +
+        '<button class="btn ghost" data-act="account-signout"><span>Se déconnecter</span>' +
+        '<small>La progression reste sur cet appareil</small></button></div>';
+    }
+    if (a.step === 'code') {
+      return '<div class="account"><p class="meta">Un code a été envoyé à <b>' + T.esc(a.email) + '</b>. Il est valable une heure.</p>' +
+        '<label class="search-label" for="account-code">Code reçu par e-mail</label>' +
+        '<input id="account-code" class="search code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456">' +
+        error +
+        '<button class="btn primary" data-act="account-verify"' + (a.busy ? ' disabled' : '') + '><span>' + (a.busy ? 'Vérification…' : 'Valider le code') + '</span></button>' +
+        '<button class="btn ghost" data-act="account-back"><span>Changer d\'adresse</span></button></div>';
+    }
+    return '<div class="account"><label class="search-label" for="account-email">Adresse e-mail</label>' +
+      '<input id="account-email" class="search" type="email" autocomplete="email" placeholder="prenom@exemple.fr" value="' + T.esc(a.email) + '">' +
+      error +
+      '<button class="btn primary" data-act="account-request"' + (a.busy ? ' disabled' : '') + '><span>' + (a.busy ? 'Envoi…' : 'Recevoir un code de connexion') + '</span>' +
+      '<small>Sans mot de passe. La progression de cet appareil sera rattachée au compte.</small></button></div>';
   }
 
   /* ================================================================== */
@@ -925,6 +959,36 @@
       const done = function () { ui.copied = true; render(); setTimeout(function () { ui.copied = false; render(); }, 2000); };
       try { navigator.clipboard.writeText(text).then(done, function () {}); } catch (e) { /* refusé : rien à signaler de plus */ }
     },
+    // Compte : demande du code, vérification, déconnexion.
+    'account-request': function () {
+      const email = (document.getElementById('account-email').value || '').trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        ui.account.email = email; ui.account.error = 'Saisissez une adresse e-mail valide.'; render(); return;
+      }
+      ui.account = { step: 'email', email: email, busy: true, error: '' };
+      render();
+      Account.requestCode(email).then(
+        function () { ui.account = { step: 'code', email: email, busy: false, error: '' }; render(); },
+        function (e) { ui.account = { step: 'email', email: email, busy: false, error: e.message }; render(); }
+      );
+    },
+    'account-verify': function () {
+      const code = (document.getElementById('account-code').value || '').replace(/\s/g, '');
+      const email = ui.account.email;
+      if (!/^\d{6,8}$/.test(code)) { ui.account.error = 'Le code est composé de 6 à 8 chiffres.'; render(); return; }
+      ui.account.busy = true; ui.account.error = ''; render();
+      Account.verifyCode(email, code).then(
+        function () {
+          ui.account = { step: 'email', email: '', busy: false, error: '' };
+          render();
+          // La progression locale est fusionnée avec celle du compte, puis renvoyée.
+          Store.connect(Account.adapter).then(render);
+        },
+        function (e) { ui.account.busy = false; ui.account.error = e.message; render(); }
+      );
+    },
+    'account-back': function () { ui.account = { step: 'email', email: ui.account.email, busy: false, error: '' }; render(); },
+    'account-signout': function () { Account.signOut(); Store.disconnect(); render(); },
     'reset-ask': function () { ui.confirmReset = true; render(); },
     'reset-no': function () { ui.confirmReset = false; render(); },
     'reset-yes': function () { ui.confirmReset = false; Store.reset(); render(); }
@@ -946,12 +1010,19 @@
     if (list) list.innerHTML = renderLibraryList();
   });
 
+  // Touche Entrée dans les champs du compte : même effet que le bouton.
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter') return;
+    if (ev.target.id === 'account-email') ACTIONS['account-request']();
+    if (ev.target.id === 'account-code') ACTIONS['account-verify']();
+  });
+
   // Démarrage : progression locale d'abord, synchronisation ensuite.
   Store.init();
   Store.onChange(function () {
     // On ne redessine pas par-dessus une vue plein écran (cela ferait perdre la position
     // de lecture ou la réponse en cours), ni pendant une saisie dans la recherche.
-    const typing = document.activeElement && document.activeElement.id === 'lib-search';
+    const typing = document.activeElement && document.activeElement.tagName === 'INPUT';
     if (!ui.overlay && !typing) render();
   });
   render();

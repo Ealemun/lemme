@@ -75,7 +75,10 @@
   /** Charge la progression locale, puis tente la synchronisation sans bloquer l'affichage. */
   function init(customAdapter) {
     state.progress = loadLocal() || E.emptyProgress(Date.now());
-    const candidate = customAdapter || root.LEMME_SYNC_ADAPTER || null;
+    // Ordre de priorité : adaptateur passé en argument, adaptateur de l'hébergeur,
+    // puis comptes par e-mail s'ils sont configurés (js/config.js).
+    const account = root.LemmeAccount && root.LemmeAccount.configured ? root.LemmeAccount.adapter : null;
+    const candidate = customAdapter || root.LEMME_SYNC_ADAPTER || account;
     if (!candidate) return state.progress; // aucun service : mode local uniquement
     candidate.connect().then(function (ok) {
       if (!ok) return;
@@ -140,8 +143,24 @@
     emit();
   }
 
+  /** Branche un service après coup (connexion à un compte) et fusionne tout de suite. */
+  function connect(newAdapter) {
+    adapter = newAdapter;
+    return syncNow();
+  }
+
+  /** Débranche le service (déconnexion) : la progression reste sur l'appareil. */
+  function disconnect() {
+    adapter = null;
+    clearTimeout(timer);
+    state.sync = 'local';
+    emit();
+  }
+
   root.LemmeStore = {
     init: init,
+    connect: connect,
+    disconnect: disconnect,
     save: save,
     reset: reset,
     syncNow: syncNow,

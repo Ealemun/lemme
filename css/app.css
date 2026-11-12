@@ -259,6 +259,8 @@ math { font-size: 1.080em; } /* rendu MathML natif */
 .s-synced .sync-dot { background: var(--good); }
 .s-syncing .sync-dot { background: var(--warn); }
 .s-error .sync-dot { background: var(--bad); }
+.account { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1.500px solid var(--line); border-radius: 12px; }
+.search.code { font-size: 1.375rem; letter-spacing: 0.250em; text-align: center; font-variant-numeric: tabular-nums; }
 .warn-text { color: var(--bad); font-size: 0.875rem; font-weight: 600; }
 .confirm { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 10px; background: var(--bad-soft); font-size: 0.875rem; }
 .confirm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
