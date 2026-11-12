@@ -10,7 +10,7 @@
  * Pour publier une nouvelle version de l'application ou du contenu,
  * changer VERSION : l'ancien cache est supprimé à l'activation.
  */
-const VERSION = 'lemme-v2';
+const VERSION = 'lemme-v3';
 
 const FILES = [
   './',

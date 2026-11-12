@@ -76,13 +76,19 @@ Le service utilisé est Supabase (base PostgreSQL et comptes), avec un projet h�
 
 1. Créer un projet sur supabase.com en choisissant une région européenne (Paris, Francfort…).
 2. Dans l'éditeur SQL du projet, exécuter le contenu de `supabase/schema.sql`.
-3. Dans Authentication > Emails, modifier le modèle « Magic Link » pour qu'il contienne le code
-   à saisir, par exemple : `<p>Votre code de connexion à Lemme : {{ .Token }}</p>`.
+3. Dans Authentication > URL Configuration, mettre l'adresse du site dans « Site URL »
+   (par exemple `https://ealemun.github.io/lemme/`) : c'est là que le lien de connexion ramène.
 4. Dans Project Settings > API, copier l'adresse du projet et la clé publique dans `js/config.js`.
    Ne jamais y mettre la clé `service_role` / `secret`.
 
-La connexion se fait par un code à usage unique reçu par e-mail, sans mot de passe. À la première
-connexion, la progression de l'appareil est fusionnée avec celle du compte.
+La connexion se fait sans mot de passe, par un e-mail contenant un lien : en l'ouvrant, on revient
+sur l'application, connecté. À la première connexion, la progression de l'appareil est fusionnée
+avec celle du compte.
+
+Le lien ouvre le navigateur par défaut : sur iPhone, une application installée sur l'écran
+d'accueil ne partage pas sa session avec Safari. Pour ce cas, l'application accepte aussi un code
+à saisir : il suffit que le modèle d'e-mail « Magic Link » contienne `{{ .Token }}` (modification
+du modèle possible seulement avec un service d'envoi d'e-mails personnalisé sur l'offre gratuite).
 
 Limites à connaître : l'envoi d'e-mails intégré à Supabase est limité à quelques messages par
 heure (brancher un service d'envoi pour un usage réel) ; la suppression complète d'un compte se

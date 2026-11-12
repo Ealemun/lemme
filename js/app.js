@@ -587,8 +587,9 @@
         '<small>La progression reste sur cet appareil</small></button></div>';
     }
     if (a.step === 'code') {
-      return '<div class="account"><p class="meta">Un code a été envoyé à <b>' + T.esc(a.email) + '</b>. Il est valable une heure.</p>' +
-        '<label class="search-label" for="account-code">Code reçu par e-mail</label>' +
+      return '<div class="account"><p class="meta">Un e-mail a été envoyé à <b>' + T.esc(a.email) + '</b>. ' +
+        'Ouvrez le lien qu\'il contient <b>sur cet appareil, dans ce navigateur</b> : vous reviendrez ici, connecté. Le lien est valable une heure.</p>' +
+        '<label class="search-label" for="account-code">Si l\'e-mail contient un code, saisissez-le ici</label>' +
         '<input id="account-code" class="search code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456">' +
         error +
         '<button class="btn primary" data-act="account-verify"' + (a.busy ? ' disabled' : '') + '><span>' + (a.busy ? 'Vérification…' : 'Valider le code') + '</span></button>' +
@@ -597,7 +598,7 @@
     return '<div class="account"><label class="search-label" for="account-email">Adresse e-mail</label>' +
       '<input id="account-email" class="search" type="email" autocomplete="email" placeholder="prenom@exemple.fr" value="' + T.esc(a.email) + '">' +
       error +
-      '<button class="btn primary" data-act="account-request"' + (a.busy ? ' disabled' : '') + '><span>' + (a.busy ? 'Envoi…' : 'Recevoir un code de connexion') + '</span>' +
+      '<button class="btn primary" data-act="account-request"' + (a.busy ? ' disabled' : '') + '><span>' + (a.busy ? 'Envoi…' : 'Recevoir un e-mail de connexion') + '</span>' +
       '<small>Sans mot de passe. La progression de cet appareil sera rattachée au compte.</small></button></div>';
   }
 
@@ -1026,6 +1027,26 @@
     if (!ui.overlay && !typing) render();
   });
   render();
+
+  // Arrivée par le lien de connexion reçu par e-mail : on ouvre la session, puis on fusionne
+  // la progression de l'appareil avec celle du compte.
+  function openSessionFromLink() {
+    Account.consumeRedirect().then(
+      function (opened) {
+        if (!opened) return;
+        ui.tab = 'profile';
+        ui.account = { step: 'email', email: '', busy: false, error: '' };
+        render();
+        return Store.connect(Account.adapter).then(render);
+      },
+      function (e) { ui.tab = 'profile'; ui.account.error = e.message; render(); }
+    );
+  }
+  if (accountsEnabled) {
+    openSessionFromLink();
+    // Cas où le lien s'ouvre dans un onglet où l'application est déjà chargée.
+    window.addEventListener('hashchange', openSessionFromLink);
+  }
 
   // Hors ligne : le service worker met l'application en cache (ignoré là où il est interdit).
   if ('serviceWorker' in navigator) {

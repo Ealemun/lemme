@@ -13,6 +13,6 @@
  * propres données. Ne JAMAIS mettre ici la clé « service_role » ou « secret ».
  */
 window.LEMME_CONFIG = {
-  supabaseUrl: '',
-  supabaseKey: ''
+  supabaseUrl: 'https://uzcztzqngtaskulkiqkz.supabase.co',
+  supabaseKey: 'sb_publishable_gOWkyQUfJvZ8m7IPivJfZA_WlcjnRXr'
 };

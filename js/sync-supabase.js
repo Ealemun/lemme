@@ -2,14 +2,16 @@
  * Lemme — comptes et synchronisation avec un projet Supabase (hébergé en Europe).
  *
  * Aucune bibliothèque : on appelle directement les deux interfaces HTTP du projet.
- *   /auth/v1  : connexion par code à usage unique envoyé par e-mail (pas de mot de passe) ;
+ *   /auth/v1  : connexion sans mot de passe, par un e-mail contenant un lien de connexion
+ *               (modèle d'e-mail par défaut) ou un code à saisir (modèle personnalisé) ;
  *   /rest/v1  : lecture et écriture de la ligne « progression » de la personne connectée.
  *
  * Ce fichier expose window.LemmeAccount :
  *   configured            vrai si js/config.js contient une adresse et une clé
  *   email()               adresse de la personne connectée, ou null
- *   requestCode(email)    envoie un code de connexion par e-mail
- *   verifyCode(email, c)  échange le code contre une session
+ *   requestCode(email)    envoie l'e-mail de connexion (lien, ou code selon le modèle)
+ *   verifyCode(email, c)  échange un code contre une session
+ *   consumeRedirect()     au chargement : ouvre la session si l'on arrive par le lien de l'e-mail
  *   signOut()             ferme la session sur cet appareil
  *   adapter               adaptateur de synchronisation attendu par LemmeStore
  *
@@ -63,7 +65,8 @@
   async function call(path, options) {
     const opt = options || {};
     const headers = Object.assign({ apikey: KEY, 'Content-Type': 'application/json' }, opt.headers || {});
-    headers.Authorization = 'Bearer ' + (opt.token || KEY);
+    // La clé publique identifie le projet ; le jeton, lui, identifie la personne connectée.
+    if (opt.token) headers.Authorization = 'Bearer ' + opt.token;
     let response;
     try {
       response = await fetch(BASE + path, {
@@ -112,9 +115,16 @@
   /* Connexion par code reçu par e-mail                                  */
   /* ------------------------------------------------------------------ */
 
+  /** Adresse de l'application, vers laquelle le lien de l'e-mail doit ramener. */
+  function appUrl() {
+    return root.location.origin + root.location.pathname;
+  }
+
   async function requestCode(email) {
     try {
-      await call('/auth/v1/otp', { method: 'POST', body: { email: email, create_user: true } });
+      await call('/auth/v1/otp?redirect_to=' + encodeURIComponent(appUrl()), {
+        method: 'POST', body: { email: email, create_user: true }
+      });
     } catch (e) {
       if (e.status === 429) throw new Error('Trop de demandes. Attendez une minute avant de redemander un code.');
       if (e.status >= 400 && e.status < 500) throw new Error('Adresse refusée. Vérifiez-la, puis réessayez.');
@@ -130,6 +140,35 @@
       if (e.status >= 400 && e.status < 500) throw new Error('Code incorrect ou expiré. Vérifiez-le ou demandez-en un nouveau.');
       throw e;
     }
+  }
+
+  /**
+   * Arrivée par le lien de l'e-mail : le service ramène sur l'application avec la session
+   * dans la partie de l'adresse située après « # ». On la lit, on l'enregistre, puis on
+   * nettoie l'adresse pour que les jetons ne restent ni à l'écran ni dans l'historique.
+   *
+   * @returns {Promise<boolean>} vrai si une session vient d'être ouverte
+   */
+  async function consumeRedirect() {
+    if (!configured) return false;
+    const hash = root.location.hash.replace(/^#/, '');
+    if (hash.indexOf('access_token=') === -1 && hash.indexOf('error=') === -1) return false;
+    const params = new URLSearchParams(hash);
+    try { root.history.replaceState(null, '', appUrl()); } catch (e) { /* sans conséquence */ }
+
+    if (params.get('error')) {
+      throw new Error('Le lien de connexion est expiré ou a déjà été utilisé. Demandez-en un nouveau.');
+    }
+    const token = params.get('access_token');
+    // Le lien ne donne pas l'identité : on la demande au service avec le jeton reçu.
+    const user = await call('/auth/v1/user', { token: token });
+    saveSession(toSession({
+      access_token: token,
+      refresh_token: params.get('refresh_token'),
+      expires_in: Number(params.get('expires_in')) || 3600,
+      user: user
+    }));
+    return true;
   }
 
   async function signOut() {
@@ -176,6 +215,7 @@
     email: function () { return session && session.user ? session.user.email : null; },
     requestCode: requestCode,
     verifyCode: verifyCode,
+    consumeRedirect: consumeRedirect,
     signOut: signOut,
     adapter: adapter
   };
